@@ -598,7 +598,7 @@ enum quantum_keycodes {
     MACRO_31,
 
     // Start of custom keycode range for keyboards and keymaps - always leave at the end
-    SAFE_RANGE
+    SAFE_RANGE//23974, 5DA6
 };
 
 // Keycode modifiers & aliases
@@ -629,6 +629,7 @@ enum quantum_keycodes {
 #define RSG(kc) (QK_RSFT | QK_RGUI | (kc))
 #define RAG(kc) (QK_RALT | QK_RGUI | (kc))
 #define LCA(kc) (QK_LCTL | QK_LALT | (kc))
+#define LCLS(kc) (QK_LCTL | QK_LSFT | (kc))
 #define LSA(kc) (QK_LSFT | QK_LALT | (kc))
 #define RSA(kc) (QK_RSFT | QK_RALT | (kc))
 #define RCS(kc) (QK_RCTL | QK_RSFT | (kc))

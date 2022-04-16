@@ -17,7 +17,28 @@
         "xstddef": "c",
         "type_traits": "c",
         "utility": "c",
-        "ranges": "c"
+        "ranges": "c",
+        "array": "c",
+        "vector": "c",
+        "xstring": "c",
+        "xutility": "c",
+        "regex": "c",
+        "system_error": "c",
+        "xlocale": "c",
+        "deque": "c",
+        "format": "c",
+        "initializer_list": "c",
+        "list": "c",
+        "random": "c",
+        "stack": "c",
+        "xhash": "c",
+        "xtree": "c",
+        "iosfwd": "c",
+        "xlocbuf": "c",
+        "ostream": "c",
+        "chrono": "c",
+        "variant": "c",
+        "xiosbase": "c"
     },
     "[markdown]": {
         "editor.trimAutoWhitespace": false,
@@ -26,5 +47,6 @@
     "python.formatting.provider": "yapf",
     "[json]": {
 	    "editor.formatOnSave": false
-    }
+    },
+    "git.ignoreLimitWarning": true
 }

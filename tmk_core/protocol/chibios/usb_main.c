@@ -245,23 +245,25 @@ typedef struct {
             }                                                                                                                   \
         }
 #else
+
+
 /* Reusable initialization structure - see USBEndpointConfig comment at top of file */
 #    define QMK_USB_DRIVER_CONFIG(stream, notification, fixedsize)                                                              \
         {                                                                                                                       \
             .queue_capacity_in = stream##_IN_CAPACITY, .queue_capacity_out = stream##_OUT_CAPACITY,                             \
-            .in_ep_config =                                                                                                     \
-                {                                                                                                               \
-                    stream##_IN_MODE,      /* Interrupt EP */                                                                   \
-                    NULL,                  /* SETUP packet notification callback */                                             \
-                    qmkusbDataTransmitted, /* IN notification callback */                                                       \
-                    NULL,                  /* OUT notification callback */                                                      \
-                    stream##_EPSIZE,       /* IN maximum packet size */                                                         \
-                    0,                     /* OUT maximum packet size */                                                        \
-                    NULL,                  /* IN Endpoint state */                                                              \
-                    NULL,                  /* OUT endpoint state */                                                             \
-                    2,                     /* IN multiplier */                                                                  \
-                    NULL                   /* SETUP buffer (not a SETUP endpoint) */                                            \
-                },                                                                                                              \
+          .in_ep_config =                                                                                                     \
+               {                                                                                                               \
+                   stream##_IN_MODE,      /* Interrupt EP */                                                                   \
+                   NULL,                  /* SETUP packet notification callback */                                             \
+                   qmkusbDataTransmitted, /* IN notification callback */                                                       \
+                   NULL,                  /* OUT notification callback */                                                      \
+                   stream##_EPSIZE,       /* IN maximum packet size */                                                         \
+                   0,                     /* OUT maximum packet size */                                                        \
+                   NULL,                  /* IN Endpoint state */                                                              \
+                   NULL,                  /* OUT endpoint state */                                                             \
+                   2,                     /* IN multiplier */                                                                  \
+                   NULL                   /* SETUP buffer (not a SETUP endpoint) */                                            \
+               },                                                                          \
             .out_ep_config =                                                                                                    \
                 {                                                                                                               \
                     stream##_OUT_MODE,  /* Interrupt EP */                                                                      \
@@ -390,7 +392,7 @@ static usb_driver_configs_t drivers = {
  * ---------------------------------------------------------
  */
 
-#define USB_EVENT_QUEUE_SIZE 16
+#define USB_EVENT_QUEUE_SIZE 32
 usbevent_t event_queue[USB_EVENT_QUEUE_SIZE];
 uint8_t    event_queue_head;
 uint8_t    event_queue_tail;
@@ -655,7 +657,7 @@ static bool usb_request_hook_cb(USBDriver *usbp) {
                         break;
 
                     case HID_SET_IDLE:
-                        //keyboard_idle = usbp->setup[3]; /* MSB(wValue) */
+                        keyboard_idle = usbp->setup[3]; /* MSB(wValue) */
                                                         /* arm the timer */
 #ifdef NKRO_ENABLE
                         if (!keymap_config.nkro && keyboard_idle) {
@@ -1043,7 +1045,7 @@ void console_task(void) {
     uint8_t buffer[CONSOLE_EPSIZE];
     size_t  size = 0;
     do {
-        size_t size = chnReadTimeout(&drivers.console_driver.driver, buffer, sizeof(buffer), TIME_IMMEDIATE);
+        size = chnReadTimeout(&drivers.console_driver.driver, buffer, sizeof(buffer), TIME_IMMEDIATE);
         if (size > 0) {
             console_receive(buffer, size);
         }
@@ -1070,8 +1072,52 @@ __attribute__((weak)) void raw_hid_receive(uint8_t *data, uint8_t length) {
 void raw_hid_task(void) {
     uint8_t buffer[RAW_EPSIZE];
     size_t  size = 0;
-    do {
-        size_t size = chnReadTimeout(&drivers.raw_driver.driver, buffer, sizeof(buffer), TIME_IMMEDIATE);
+    do { //TODO: Maybe turn into a pr?
+        // uint8_t counter = 0;
+        size = chnReadTimeout(&drivers.raw_driver.driver, buffer, sizeof(buffer), TIME_IMMEDIATE);
+        // size_t index = 0;
+        // buffer[0] = counter;
+        // buffer[index++] = (size>>8 )& 0xff;
+        // buffer[index++] = (size>>16) & 0xff;
+        // buffer[index++] = (size>>24) & 0xff;
+        // buffer[index++] =  drivers.raw_driver.queue_capacity_in & 0xff;
+        // buffer[index++] = (drivers.raw_driver.queue_capacity_in>>8 )& 0xff;
+        // buffer[index++] = (drivers.raw_driver.queue_capacity_in>>16) & 0xff;
+        // buffer[index++] = (drivers.raw_driver.queue_capacity_in>>24) & 0xff;
+        // buffer[index++] =  drivers.raw_driver.queue_capacity_out & 0xff;
+        // buffer[index++] = (drivers.raw_driver.queue_capacity_out>>8 )& 0xff;
+        // buffer[index++] = (drivers.raw_driver.queue_capacity_out>>16) & 0xff;
+        // buffer[index++] = (drivers.raw_driver.queue_capacity_out>>24) & 0xff;
+        // buffer[index++] =  sizeof(usb_driver_config_t) & 0xff;
+        // buffer[index++] = (sizeof(usb_driver_config_t)>>8 )& 0xff;
+        // buffer[index++] = (sizeof(usb_driver_config_t)>>16) & 0xff;
+        // buffer[index++] = (sizeof(usb_driver_config_t)>>24) & 0xff;
+        // buffer[index++] =  counter & 0xff;
+        // buffer[index++] = (counter>>8 )& 0xff;
+        // buffer[index++] = (counter>>16) & 0xff;
+        // buffer[index++] = (counter>>24) & 0xff;
+        // counter++;
+        //if(size > 0)
+        //    raw_hid_send(buffer, RAW_EPSIZE);
+        //else if(size < 0){
+        //    buffer[0] = 0xFE;
+        //    buffer[1] = 0xEE;
+        //    buffer[2] = 0xCE;
+        //    buffer[3] = 0xBE;
+        //    buffer[4] = size;
+        //    buffer[5] = (size>>8 )& 0xff;
+        //    buffer[6] = (size>>16) & 0xff;
+       //     buffer[7] = (size>>24) & 0xff;
+        //    raw_hid_send(buffer, RAW_EPSIZE);
+        //}
+
+        // if(size > 0)
+        //     counter = 0;
+        // if(counter > 1500){
+        //     counter = 0;
+        //     qmkusbStop(&drivers.raw_driver.driver);
+        //     qmkusbStart(&drivers.raw_driver.driver, &drivers.raw_driver.config);
+        // }
         if (size > 0) {
             raw_hid_receive(buffer, size);
         }
@@ -1092,7 +1138,7 @@ void midi_ep_task(void) {
     uint8_t buffer[MIDI_STREAM_EPSIZE];
     size_t  size = 0;
     do {
-        size_t size = chnReadTimeout(&drivers.midi_driver.driver, buffer, sizeof(buffer), TIME_IMMEDIATE);
+        size = chnReadTimeout(&drivers.midi_driver.driver, buffer, sizeof(buffer), TIME_IMMEDIATE);
         if (size > 0) {
             MIDI_EventPacket_t event;
             recv_midi_packet(&event);

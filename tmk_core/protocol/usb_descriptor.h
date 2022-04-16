@@ -49,9 +49,11 @@
 #    include <hal.h>
 #endif
 
+
 /*
  * USB descriptor structure
  */
+
 typedef struct {
     USB_Descriptor_Configuration_Header_t Config;
 
@@ -215,11 +217,13 @@ enum usb_endpoints {
 #endif
 
 #ifdef RAW_ENABLE
+
     RAW_IN_EPNUM = NEXT_EPNUM,
+
 #    if STM32_USB_USE_OTG1
 #        define RAW_OUT_EPNUM RAW_IN_EPNUM
 #    else
-    RAW_OUT_EPNUM         = NEXT_EPNUM,
+      RAW_OUT_EPNUM         = NEXT_EPNUM,
 #    endif
 #endif
 
@@ -237,7 +241,7 @@ enum usb_endpoints {
 #        if STM32_USB_USE_OTG1
 #            define CONSOLE_OUT_EPNUM CONSOLE_IN_EPNUM
 #        else
-    CONSOLE_OUT_EPNUM   = NEXT_EPNUM,
+     CONSOLE_OUT_EPNUM   = NEXT_EPNUM,
 #        endif
 #    else
 #        define CONSOLE_OUT_EPNUM CONSOLE_IN_EPNUM
@@ -295,6 +299,7 @@ enum usb_endpoints {
 
 // TODO - ARM_ATSAM
 
+
 #if (NEXT_EPNUM - 1) > MAX_ENDPOINTS
 #    error There are not enough available endpoints to support all functions. Please disable one or more of the following: Mouse Keys, Extra Keys, Console, NKRO, MIDI, Serial, Steno
 #endif
@@ -302,7 +307,7 @@ enum usb_endpoints {
 #define KEYBOARD_EPSIZE 8
 #define SHARED_EPSIZE 32
 #define MOUSE_EPSIZE 8
-#define RAW_EPSIZE 32
+#define RAW_EPSIZE 64
 #define CONSOLE_EPSIZE 32
 #define MIDI_STREAM_EPSIZE 64
 #define CDC_NOTIFICATION_EPSIZE 8

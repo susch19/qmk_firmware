@@ -375,6 +375,9 @@ SRC += \
     $(KEYMAP_C) \
     $(QUANTUM_SRC) \
     $(QUANTUM_DIR)/main.c \
+    $(KEYMAP_PATH)/raw_hid_custom.c \
+    $(KEYMAP_PATH)/tap_dance_custom.c \
+
 
 # Optimize size but this may cause error "relocation truncated to fit"
 #EXTRALDFLAGS = -Wl,--relax

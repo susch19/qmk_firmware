@@ -42,7 +42,7 @@ void raw_hid_task(void);
 /* This is from main.c of USBaspLoader */
 static void initForUsbConnectivity(void) {
     uint8_t i = 0;
-
+asd
     usbInit();
     /* enforce USB re-enumerate: */
     usbDeviceDisconnect(); /* do this while interrupts are disabled */

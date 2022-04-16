@@ -94,7 +94,16 @@ static msg_t _gett(void *ip, sysinterval_t timeout) { return ibqGetTimeout(&((QM
 
 static size_t _writet(void *ip, const uint8_t *bp, size_t n, sysinterval_t timeout) { return obqWriteTimeout(&((QMKUSBDriver *)ip)->obqueue, bp, n, timeout); }
 
-static size_t _readt(void *ip, uint8_t *bp, size_t n, sysinterval_t timeout) { return ibqReadTimeout(&((QMKUSBDriver *)ip)->ibqueue, bp, n, timeout); }
+static size_t _readt(void *ip, uint8_t *bp, size_t n, sysinterval_t timeout) { return tmpibqReadTimeout(&((QMKUSBDriver *)ip)->ibqueue, bp, n, timeout); }
+
+// static size_t _readt(void *ip, uint8_t *bp, size_t n, sysinterval_t timeout) {
+//     msg_t msg;
+//     size_t size =  tmpibqReadTimeout(&((QMKUSBDriver *)ip)->ibqueue, bp, n, timeout, &msg);
+//     if(msg != MSG_OK && msg != MSG_RESET)
+//         obqResetI(&((QMKUSBDriver *)ip)->obqueue);
+//     _writet(ip, (uint8_t *)&msg, sizeof(msg_t), TIME_IMMEDIATE);
+//     return size;
+// }
 
 static const struct QMKUSBDriverVMT vmt = {0, _write, _read, _put, _get, _putt, _gett, _writet, _readt};
 
