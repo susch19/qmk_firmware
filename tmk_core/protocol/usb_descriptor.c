@@ -356,7 +356,7 @@ const USB_Descriptor_Device_t PROGMEM DeviceDescriptor = {
         .Type                   = DTYPE_Device
     },
     .USBSpecification           = VERSION_BCD(1, 1, 0),
-    
+
 #if VIRTSER_ENABLE
     .Class                      = USB_CSCP_IADDeviceClass,
     .SubClass                   = USB_CSCP_IADDeviceSubclass,
@@ -387,7 +387,7 @@ const USB_Descriptor_Device_t PROGMEM DeviceDescriptor = {
 #endif
 
 #ifndef USB_POLLING_INTERVAL_MS
-#    define USB_POLLING_INTERVAL_MS 10
+#    define USB_POLLING_INTERVAL_MS 1
 #endif
 
 /*

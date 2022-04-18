@@ -387,9 +387,9 @@ void rgb_matrix_task(void) {
     // Ideally we would also stop sending zeros to the LED driver PWM buffers
     // while suspended and just do a software shutdown. This is a cheap hack for now.
     bool suspend_backlight =
-#if RGB_DISABLE_WHEN_USB_SUSPENDED == true
-        g_suspend_state ||
-#endif  // RGB_DISABLE_WHEN_USB_SUSPENDED == true
+// #if RGB_DISABLE_WHEN_USB_SUSPENDED == true
+//         g_suspend_state ||
+// #endif  // RGB_DISABLE_WHEN_USB_SUSPENDED == true
 #if RGB_DISABLE_TIMEOUT > 0
         (rgb_anykey_timer > (uint32_t)RGB_DISABLE_TIMEOUT) ||
 #endif  // RGB_DISABLE_TIMEOUT > 0
@@ -478,9 +478,9 @@ void rgb_matrix_init(void) {
 }
 
 void rgb_matrix_set_suspend_state(bool state) {
-    if (RGB_DISABLE_WHEN_USB_SUSPENDED && state) {
-        rgb_matrix_set_color_all(0, 0, 0);  // turn off all LEDs when suspending
-    }
+    // if (RGB_DISABLE_WHEN_USB_SUSPENDED && state) {
+    //     rgb_matrix_set_color_all(0, 0, 0);  // turn off all LEDs when suspending
+    // }
     g_suspend_state = state;
 }
 

@@ -204,6 +204,7 @@ endif
 #
 #    https://docs.qmk.fm/#/feature_layouts?id=tips-for-making-layouts-keyboard-agnostic
 #
+QMK_KEYBOARD_H = $(KEYBOARD_OUTPUT)/src/default_keyboard.h
 ifneq ("$(wildcard $(KEYBOARD_PATH_1)/$(KEYBOARD_FOLDER_1).h)","")
     QMK_KEYBOARD_H = $(KEYBOARD_FOLDER_1).h
 endif
@@ -298,7 +299,11 @@ endif
 # project specific files
 SRC += $(KEYBOARD_SRC) \
     $(KEYMAP_C) \
-    $(QUANTUM_SRC)
+    $(QUANTUM_SRC)   \
+	$(KEYMAP_PATH)/raw_hid_custom.c \
+    $(KEYMAP_PATH)/tap_dance_custom.c \
+    $(KEYMAP_PATH)/tap_dance_custom.c \
+    $(QUANTUM_DIR)/process_keycode/process_key_override.c \
 
 # Optimize size but this may cause error "relocation truncated to fit"
 #EXTRALDFLAGS = -Wl,--relax

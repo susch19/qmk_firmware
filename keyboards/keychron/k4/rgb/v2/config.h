@@ -14,11 +14,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/* USB Device descriptor parameter */
-#define VENDOR_ID       0x05AC
-#define PRODUCT_ID      0x024F
-#define DEVICE_VER      0x0001
-
 #define MANUFACTURER    Keychron
 #define PRODUCT         K4
 #define DESCRIPTION     K4 Gateron RGB v2
@@ -27,3 +22,30 @@
 #define LED_CAPS_LOCK_PIN B12
 #define LED_NUM_LOCK_PIN  D4
 #define LED_PIN_ON_STATE  1
+
+#define ENABLE_RGB_MATRIX_ALPHAS_MODS
+#define ENABLE_RGB_MATRIX_GRADIENT_UP_DOWN
+#define ENABLE_RGB_MATRIX_GRADIENT_LEFT_RIGHT
+#define ENABLE_RGB_MATRIX_BREATHING
+#define ENABLE_RGB_MATRIX_CYCLE_ALL
+#define ENABLE_RGB_MATRIX_CYCLE_LEFT_RIGHT
+#define ENABLE_RGB_MATRIX_CYCLE_UP_DOWN
+#define ENABLE_RGB_MATRIX_HUE_BREATHING
+#define ENABLE_RGB_MATRIX_HUE_PENDULUM
+#define ENABLE_RGB_MATRIX_HUE_WAVE
+
+#define RGB_MATRIX_STARTUP_MODE RGB_MATRIX_CUSTOM_PC_DRIVEN
+#define RGB_DISABLE_WHEN_USB_SUSPENDED
+// #define DEBUG_MATRIX_SCAN_RATE
+
+#ifndef KEYBOARD_SHARED_EP
+#define KEYBOARD_SHARED_EP
+#endif
+
+#ifndef SHARED_EP_ENABLE
+#define SHARED_EP_ENABLE
+#endif
+
+#ifndef KEY_OVERRIDE_ENABLE
+#define KEY_OVERRIDE_ENABLE
+#endif

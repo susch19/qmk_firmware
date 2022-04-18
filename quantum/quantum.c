@@ -62,30 +62,32 @@ float bell_song[][2] = SONG(TERMINAL_SOUND);
 #    include "process_auto_shift.h"
 #endif
 
-static void do_code16(uint16_t code, void (*f)(uint8_t)) {
+uint8_t extract_mod_bits(uint16_t code) {
     switch (code) {
         case QK_MODS ... QK_MODS_MAX:
             break;
         default:
-            return;
+            return 0;
     }
 
     uint8_t mods_to_send = 0;
 
     if (code & QK_RMODS_MIN) {  // Right mod flag is set
-        if (code & QK_LCTL) mods_to_send |= MOD_BIT(KC_RCTL);
-        if (code & QK_LSFT) mods_to_send |= MOD_BIT(KC_RSFT);
-        if (code & QK_LALT) mods_to_send |= MOD_BIT(KC_RALT);
-        if (code & QK_LGUI) mods_to_send |= MOD_BIT(KC_RGUI);
+        if (code & QK_LCTL) mods_to_send |= MOD_BIT(KC_RIGHT_CTRL);
+        if (code & QK_LSFT) mods_to_send |= MOD_BIT(KC_RIGHT_SHIFT);
+        if (code & QK_LALT) mods_to_send |= MOD_BIT(KC_RIGHT_ALT);
+        if (code & QK_LGUI) mods_to_send |= MOD_BIT(KC_RIGHT_GUI);
     } else {
-        if (code & QK_LCTL) mods_to_send |= MOD_BIT(KC_LCTL);
-        if (code & QK_LSFT) mods_to_send |= MOD_BIT(KC_LSFT);
-        if (code & QK_LALT) mods_to_send |= MOD_BIT(KC_LALT);
-        if (code & QK_LGUI) mods_to_send |= MOD_BIT(KC_LGUI);
+        if (code & QK_LCTL) mods_to_send |= MOD_BIT(KC_LEFT_CTRL);
+        if (code & QK_LSFT) mods_to_send |= MOD_BIT(KC_LEFT_SHIFT);
+        if (code & QK_LALT) mods_to_send |= MOD_BIT(KC_LEFT_ALT);
+        if (code & QK_LGUI) mods_to_send |= MOD_BIT(KC_LEFT_GUI);
     }
 
-    f(mods_to_send);
+    return mods_to_send;
 }
+
+static void do_code16(uint16_t code, void (*f)(uint8_t)) { f(extract_mod_bits(code)); }
 
 void register_code16(uint16_t code) {
     if (IS_MOD(code) || code == KC_NO) {
@@ -232,6 +234,8 @@ bool process_record_quantum(keyrecord_t *record) {
             process_record_via(keycode, record) &&
 #endif
             process_record_kb(keycode, record) &&
+
+
 #if defined(SEQUENCER_ENABLE)
             process_sequencer(keycode, record) &&
 #endif
@@ -249,6 +253,9 @@ bool process_record_quantum(keyrecord_t *record) {
 #endif
 #if (defined(AUDIO_ENABLE) || (defined(MIDI_ENABLE) && defined(MIDI_BASIC))) && !defined(NO_MUSIC_MODE)
             process_music(keycode, record) &&
+#endif
+#ifdef KEY_OVERRIDE_ENABLE
+            process_key_override(keycode, record) &&
 #endif
 #ifdef TAP_DANCE_ENABLE
             process_tap_dance(keycode, record) &&
@@ -638,7 +645,12 @@ void matrix_scan_quantum() {
 #endif
 
 #ifdef TAP_DANCE_ENABLE
-    matrix_scan_tap_dance();
+    tap_dance_task();
+#endif
+
+
+#ifdef KEY_OVERRIDE_ENABLE
+    key_override_task();
 #endif
 
 #ifdef COMBO_ENABLE

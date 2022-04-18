@@ -128,6 +128,11 @@ extern layer_state_t layer_state;
 #    include "process_auto_shift.h"
 #endif
 
+#ifdef KEY_OVERRIDE_ENABLE
+#    include "process_key_override.h"
+#endif
+
+
 #ifdef COMBO_ENABLE
 #    include "process_combo.h"
 #endif

@@ -52,7 +52,7 @@
  *          setting also defines the system tick time unit.
  */
 #    if !defined(CH_CFG_ST_FREQUENCY)
-#        define CH_CFG_ST_FREQUENCY 10000
+#        define CH_CFG_ST_FREQUENCY 5000
 #    endif
 
 /**
@@ -152,7 +152,7 @@
  * @note    The default is @p TRUE.
  */
 #    if !defined(CH_CFG_OPTIMIZE_SPEED)
-#        define CH_CFG_OPTIMIZE_SPEED FALSE
+#        define CH_CFG_OPTIMIZE_SPEED TRUE
 #    endif
 
 /** @} */
@@ -250,7 +250,7 @@
  * @note    Requires @p CH_CFG_USE_MUTEXES.
  */
 #    if !defined(CH_CFG_USE_CONDVARS)
-#        define CH_CFG_USE_CONDVARS TRUE
+#        define CH_CFG_USE_CONDVARS FALSE
 #    endif
 
 /**
@@ -262,7 +262,7 @@
  * @note    Requires @p CH_CFG_USE_CONDVARS.
  */
 #    if !defined(CH_CFG_USE_CONDVARS_TIMEOUT)
-#        define CH_CFG_USE_CONDVARS_TIMEOUT FALSE
+#        define CH_CFG_USE_CONDVARS_TIMEOUT TRUE
 #    endif
 
 /**
@@ -295,7 +295,7 @@
  * @note    The default is @p TRUE.
  */
 #    if !defined(CH_CFG_USE_MESSAGES)
-#        define CH_CFG_USE_MESSAGES TRUE
+#        define CH_CFG_USE_MESSAGES FALSE
 #    endif
 
 /**
@@ -320,7 +320,7 @@
  * @note    Requires @p CH_CFG_USE_SEMAPHORES.
  */
 #    if !defined(CH_CFG_USE_MAILBOXES)
-#        define CH_CFG_USE_MAILBOXES TRUE
+#        define CH_CFG_USE_MAILBOXES FALSE
 #    endif
 
 /**
@@ -331,7 +331,7 @@
  * @note    The default is @p TRUE.
  */
 #    if !defined(CH_CFG_USE_MEMCORE)
-#        define CH_CFG_USE_MEMCORE FALSE
+#        define CH_CFG_USE_MEMCORE TRUE
 #    endif
 
 /**
