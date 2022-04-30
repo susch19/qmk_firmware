@@ -12,7 +12,10 @@
 enum layer_names { _BASE = 0, _FL, _MYCKC};
 enum my_keycodes {
     MYCALC= SAFE_RANGE,
-    KC_EASYSHIFT = 0x5FFF,
+    KC_BTNM,
+    KC_STARONHOLD,
+    KC_EASYSHIFT = 0x5FFE,
+    TD_EASYSHIFT = 0x5FFF,
     MYCKC_ESC = 0x6000, //6000 - 5DA6 => 602 Keys before
     MYCKC_F1,
     MYCKC_F2,
@@ -115,3 +118,13 @@ enum my_keycodes {
     MYCKC_P0,
     MYCKC_NUMCOL
 };
+
+#define CustomRegisterCodes(code) (code == TD_EASYSHIFT)
+
+#ifndef CCLCK_KEYS
+#    define CCLCK_KEYS KC_TRANSPARENT, TD_EASYSHIFT, KC_TRANSPARENT, KC_CAPSLOCK
+#endif
+
+#ifndef CustomLayer
+    #define CustomLayer(keycode) (keycode == 0x5FFF  ? _MYCKC : -1);
+#endif

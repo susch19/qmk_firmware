@@ -18,25 +18,27 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "raw_hid.h"
 #include "print.h"
 #include "commands.h"
-#include "tap_dance_custom.h"
+#ifdef TAP_DANCE_ENABLE
+ #include "tap_dance_custom.h"
+#endif
 #include "raw_hid_custom.h"
 #include "keymap.h"
-
+#include "custom_space_cadet.h"
 
 extern bool last_suspend_state;
-
 static bool calcMode = false;
 
+bool suspend_state = false;
 
-const key_override_t space_key_override = ko_make_with_layers_and_negmods(MOD_MASK_SHIFT, KC_SPACE, KC_BACKSPACE, ~0, MOD_MASK_CAG);
-const key_override_t delete_key_override = ko_make_basic(MOD_MASK_SHIFT, KC_DELETE, KC_INSERT);
+// const key_override_t space_key_override = ko_make_with_layers_and_negmods(MOD_MASK_SHIFT, KC_SPACE, KC_BACKSPACE, ~0, MOD_MASK_CAG);
+// const key_override_t delete_key_override = ko_make_basic(MOD_MASK_SHIFT, KC_DELETE, KC_INSERT);
 
 
-const key_override_t **key_overrides = (const key_override_t *[]){
-    &space_key_override,
-    &delete_key_override,
-    NULL // Null terminate the array of overrides!
-};
+// const key_override_t **key_overrides = (const key_override_t *[]){
+//     // &space_key_override,
+//     // &delete_key_override,
+//     NULL // Null terminate the array of overrides!
+// };
 
 // #pragma region TapDance
 
@@ -63,10 +65,10 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     /*  Row:        0          1          2          3        4        5        6         7        8        9          10         11         12         13         14         15         16         17         18     */
     [_BASE] =  {{KC_ESC,    KC_F1,      KC_F2,      KC_F3,   KC_F4,    KC_F5,   KC_F6, KC_F7,   KC_F8,      KC_F9,     KC_F10, KC_F11, KC_F12, KC_DEL, KC_HOME, KC_END, KC_PGUP, KC_PGDN, RGB_TOG},
                 {KC_GRV,    KC_1,       KC_2,       KC_3,    KC_4,     KC_5,    KC_6,  KC_7,    KC_8,       KC_9,      KC_0, KC_MINS, KC_EQL, KC_BSPC, KC_NO, KC_NLCK, KC_PSLS, KC_PAST, KC_PMNS},
-                {KC_TAB,    KC_Q,       KC_W,       KC_E,    KC_R,     KC_T,    KC_Y,  KC_U,    KC_I,       KC_O,      KC_P, KC_LBRC, KC_RBRC, KC_NO, KC_NO, KC_P7, KC_P8, KC_P9, KC_PPLS},
-                {TD(EASYSHIFT),   KC_A,       KC_S,       KC_D,    KC_F,     KC_G,    KC_H,  KC_J,    KC_K,       KC_L,      KC_SCLN, KC_QUOT, KC_NUHS, KC_ENT, KC_NO, KC_P4, KC_P5, KC_P6, KC_NO},
-                {KC_LSFT,   KC_NUBS,    KC_Z,       KC_X,    KC_C,     KC_V,    KC_B,  KC_N,    KC_M,       KC_COMM,   KC_DOT, KC_SLSH, KC_NO, KC_RSFT, KC_UP, KC_P1, KC_P2, KC_P3, KC_PENT},
-                {KC_LCTL,   KC_LGUI,    KC_LALT,    KC_NO,   KC_NO,    KC_NO,   KC_SPC, KC_NO,  KC_NO,      KC_NO,      KC_RALT, MO(_FL), KC_RCTL, KC_LEFT, KC_DOWN, KC_RGHT, KC_P0, TD(BETTERNUM), KC_NO}},
+                {KC_TAB,    KC_Q,       KC_W,       KC_E,    KC_R,     KC_T,    KC_Y,  KC_U,    KC_I,       KC_O,      KC_P, KC_LBRC, KC_STARONHOLD/*TD(STARONHOLD)*/, KC_NO, KC_NO, KC_P7, KC_P8, KC_P9, KC_PPLS},
+                {KC_EASYSHIFT,   KC_A,       KC_S,       KC_D,    KC_F,     KC_G,    KC_H,  KC_J,    KC_K,       KC_L,      KC_SCLN, KC_QUOT, KC_NUHS, KC_ENT, KC_NO, KC_P4, KC_P5, KC_P6, KC_NO},
+                {KC_LSPO,   KC_NUBS,    KC_Z,       KC_X,    KC_C,     KC_V,    KC_B,  KC_N,    KC_M,       KC_COMM,   KC_DOT, KC_SLSH, KC_NO, KC_RSPC, KC_UP, KC_P1, KC_P2, KC_P3, KC_PENT},
+                {KC_LCPO,   KC_LGUI,    KC_LAPO,    KC_NO,   KC_NO,    KC_NO,   KC_SPC, KC_NO,  KC_NO,      KC_NO,      KC_RAPC, MO(_FL), KC_RCPC, KC_LEFT, KC_DOWN, KC_RGHT, KC_P0, KC_BTNM, KC_NO}},
 
     /*  Row:        0          1          2          3        4        5        6         7         8        9          10        11           12          13        14        15       16         17        18     */
     [_FL] = {{RESET, KC_SLCK, KC_PAUS, KC_APP, _______, RGB_VAD, RGB_VAI, KC_MPRV, KC_MPLY, KC_MNXT, KC__MUTE, KC__VOLDOWN, KC__VOLUP, KC_INS, KC_PSCR, _______, _______, _______, RGB_MOD},
@@ -259,15 +261,18 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     // static uint16_t fnx_layer_timer;
     bool ret = true;
 
-    if(keycode >= (0x5700 | BETTERNUM) && keycode <= (0x5700 | EASYSHIFT))
-    {
-        return true;
-    }
-    if(last_suspend_state){
+    if(suspend_state){
         tap_code16(KC_WAKE);
     }
+    // if(keycode >= (0x5700 | BETTERNUM) && keycode <= (0x5700 | STARONHOLD))
+    // {
+    //     return true;
+    // }
+    if(keycode >= MYCKC_ESC && keycode <= MYCKC_NUMCOL){
+        ret = false;
+    }
 
-    if(keycode == MYCALC)
+    if(record->event.pressed && keycode == MYCALC)
     {
         calcMode = !calcMode;
     }
@@ -300,10 +305,15 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     // }
 
 
-    if(keycode >= MYCKC_ESC && keycode <= MYCKC_NUMCOL){
-        ret = false;
-    }
+    ret = ret & process_custom_space_cadet(keycode, record);
     sendKeyCodeOverRawHid(keycode, record);
+    // if(keycode == KC_EASYSHIFT){
+    //     if(record->event.pressed)
+    //         layer_on(_MYCKC);
+    //     else
+    //         layer_off(_MYCKC);
+
+    // }
     return ret;
 }
 
@@ -312,4 +322,26 @@ bool led_update_user(led_t led_state){
     writePin(LED_NUM_LOCK_PIN, !led_state.num_lock && !last_suspend_state);
     writePin(LED_CAPS_LOCK_PIN, led_state.caps_lock && !last_suspend_state);
     return false;
+}
+
+void set_suspend_state(bool state)
+{
+    suspend_state = state;
+}
+
+void suspend_power_down_kb(void)
+{
+    rgb_matrix_set_suspend_state(true);
+    set_suspend_state(true);
+
+    rgb_matrix_set_color_all(0, 0, 0);  // turn off all LEDs when suspending
+
+    suspend_power_down_user();
+}
+
+void suspend_wakeup_init_kb(void)
+{
+    rgb_matrix_set_suspend_state(false);
+    set_suspend_state(false);
+    suspend_wakeup_init_user();
 }

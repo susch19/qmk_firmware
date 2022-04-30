@@ -21,7 +21,8 @@ typedef struct {
 // Tap dance enums
 enum {
     BETTERNUM,
-    EASYSHIFT
+    EASYSHIFT,
+    STARONHOLD
 };
 
 
@@ -30,8 +31,11 @@ td_state_t cur_dance(qk_tap_dance_state_t *state);
 
 
 void betternum_finished(qk_tap_dance_state_t *state, void *user_data);
+void betternum_reset(qk_tap_dance_state_t *state, void *user_data);
 
-void betternum_reset(qk_tap_dance_state_t *state, void *user_data) ;
-void easyshift_finished(qk_tap_dance_state_t *state, void *user_data) ;
-
+void easyshift_finished(qk_tap_dance_state_t *state, void *user_data);
 void easyshift_reset(qk_tap_dance_state_t *state, void *user_data);
+
+
+void staronhold_finished(qk_tap_dance_state_t *state, void *user_data);
+void staronhold_reset(qk_tap_dance_state_t *state, void *user_data);

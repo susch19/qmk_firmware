@@ -90,9 +90,9 @@ void easyshift_finished(qk_tap_dance_state_t *state, void *user_data) {
             sendKeyCodeOverRawHid(KC_CAPSLOCK, &pressed);
         break;
         case TD_SINGLE_HOLD:
-            register_code16(KC_EASYSHIFT);
+            register_code16(TD_EASYSHIFT);
             layer_on(_MYCKC);
-            sendKeyCodeOverRawHid(KC_EASYSHIFT, &pressed); break;
+            sendKeyCodeOverRawHid(TD_EASYSHIFT, &pressed); break;
         default:
         break;
     }
@@ -106,9 +106,9 @@ void easyshift_reset(qk_tap_dance_state_t *state, void *user_data){
             sendKeyCodeOverRawHid(KC_CAPSLOCK, &depressed);
             break;
         case TD_SINGLE_HOLD:
-            unregister_code16(KC_EASYSHIFT);
+            unregister_code16(TD_EASYSHIFT);
             layer_off(_MYCKC);
-            sendKeyCodeOverRawHid(KC_EASYSHIFT, &depressed);
+            sendKeyCodeOverRawHid(TD_EASYSHIFT, &depressed);
             break;
         default:
         break;
@@ -117,8 +117,37 @@ void easyshift_reset(qk_tap_dance_state_t *state, void *user_data){
 }
 
 
+void staronhold_finished(qk_tap_dance_state_t *state, void *user_data) {
+    xtap_state.state = cur_dance(state);
+    keyrecord_t pressed = {{{12,2},true,timer_read()}, {0,0,0,0,0}};
+    switch (xtap_state.state) {
+        case TD_SINGLE_TAP:
+            tap_code(KC_RBRC);
+            sendKeyCodeOverRawHid(KC_RBRC, &pressed);break; //KC_RBRC => +*~ Key for iso
+        case TD_SINGLE_HOLD:
+            tap_code16(S(KC_RBRC));
+            sendKeyCodeOverRawHid(S(KC_RBRC), &pressed);break;
+        default:
+        break;
+    }
+}
+
+void staronhold_reset(qk_tap_dance_state_t *state, void *user_data) {
+    keyrecord_t depressed = {{{12,2},false,timer_read()}, {0,0,0,0,0}};
+    switch (xtap_state.state) {
+        case TD_SINGLE_TAP: sendKeyCodeOverRawHid(KC_RBRC, &depressed);break;
+        case TD_SINGLE_HOLD: sendKeyCodeOverRawHid(S(KC_RBRC), &depressed); break;
+        default:
+        break;
+    }
+}
+
+
+
+
 qk_tap_dance_action_t tap_dance_actions[] = {
     [BETTERNUM] = ACTION_TAP_DANCE_FN_ADVANCED_TIME(NULL, betternum_finished, betternum_reset, 125),
     [EASYSHIFT] = ACTION_TAP_DANCE_FN_ADVANCED_TIME(NULL, easyshift_finished, easyshift_reset, 125),
+    [STARONHOLD] = ACTION_TAP_DANCE_FN_ADVANCED_TIME(NULL, staronhold_finished, staronhold_reset, 125),
 };
 
