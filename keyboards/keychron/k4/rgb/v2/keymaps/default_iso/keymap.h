@@ -14,6 +14,7 @@ enum my_keycodes {
     MYCALC= SAFE_RANGE,
     KC_BTNM,
     KC_STARONHOLD,
+    CLEAR_MODS,
     KC_EASYSHIFT = 0x5FFE,
     TD_EASYSHIFT = 0x5FFF,
     MYCKC_ESC = 0x6000, //6000 - 5DA6 => 602 Keys before
@@ -128,3 +129,4 @@ enum my_keycodes {
 #ifndef CustomLayer
     #define CustomLayer(keycode) (keycode == 0x5FFF  ? _MYCKC : -1);
 #endif
+

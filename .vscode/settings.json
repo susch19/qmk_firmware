@@ -38,7 +38,10 @@
         "ostream": "c",
         "chrono": "c",
         "variant": "c",
-        "xiosbase": "c"
+        "xiosbase": "c",
+        "algorithm": "c",
+        "cstdlib": "c",
+        "cmath": "c"
     },
     "[markdown]": {
         "editor.trimAutoWhitespace": false,

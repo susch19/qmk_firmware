@@ -94,7 +94,7 @@ static msg_t _gett(void *ip, sysinterval_t timeout) { return ibqGetTimeout(&((QM
 
 static size_t _writet(void *ip, const uint8_t *bp, size_t n, sysinterval_t timeout) { return obqWriteTimeout(&((QMKUSBDriver *)ip)->obqueue, bp, n, timeout); }
 
-static size_t _readt(void *ip, uint8_t *bp, size_t n, sysinterval_t timeout) { return tmpibqReadTimeout(&((QMKUSBDriver *)ip)->ibqueue, bp, n, timeout); }
+static size_t _readt(void *ip, uint8_t *bp, size_t n, sysinterval_t timeout) { return ibqReadTimeout(&((QMKUSBDriver *)ip)->ibqueue, bp, n, timeout); }
 
 // static size_t _readt(void *ip, uint8_t *bp, size_t n, sysinterval_t timeout) {
 //     msg_t msg;
