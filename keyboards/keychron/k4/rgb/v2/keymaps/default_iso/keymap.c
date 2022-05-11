@@ -14,8 +14,9 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-#define PRINTF_SUPPORT_FLOAT
-#define CHPRINTF_USE_FLOAT
+// #define PRINTF_SUPPORT_FLOAT
+// #define CHPRINTF_USE_FLOAT
+#define ON_KEYBOARD_CALCULATOR_ENABLE
 #include QMK_KEYBOARD_H
 #include "raw_hid.h"
 #include "print.h"
@@ -26,13 +27,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "raw_hid_custom.h"
 #include "keymap.h"
 #include "custom_space_cadet.h"
-#include "calc.c"
-#include "math.h"
+#ifdef ON_KEYBOARD_CALCULATOR_ENABLE
+#    include "calc.c"
+#endif
 
 extern bool      last_suspend_state;
 extern uint32_t *instscval;
-static bool      calcMode = false;
 
+// long long _Accum  something      = 0.0k;
 bool     suspend_state  = false;
 uint32_t lastLightLevel = 0;
 
@@ -68,12 +70,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
                     +--------------------------------------------------------------------------+-------------------+
     */
     /*  Row:        0          1          2          3        4        5        6         7        8        9          10         11         12         13         14         15         16         17         18     */
-    [_BASE] = {{KC_ESC, KC_F1, KC_F2, KC_F3, KC_F4, KC_F5, KC_F6, KC_F7, KC_F8, KC_F9, KC_F10, KC_F11, KC_F12, KC_DEL, KC_HOME, KC_END, KC_PGUP, KC_PGDN, RGB_TOG},
-            {KC_GRV, KC_1, KC_2, KC_3, KC_4, KC_5, KC_6, KC_7, KC_8, KC_9, KC_0, KC_MINS, KC_EQL, KC_BSPC, KC_NO, KC_NLCK, KC_PSLS, KC_PAST, KC_PMNS},
-            {KC_TAB, KC_Q, KC_W, KC_E, KC_R, KC_T, KC_Y, KC_U, KC_I, KC_O, KC_P, KC_LBRC, KC_STARONHOLD /*TD(STARONHOLD)*/, KC_NO, KC_NO, KC_P7, KC_P8, KC_P9, KC_PPLS},
-            {KC_EASYSHIFT, KC_A, KC_S, KC_D, KC_F, KC_G, KC_H, KC_J, KC_K, KC_L, KC_SCLN, KC_QUOT, KC_NUHS, KC_ENT, KC_NO, KC_P4, KC_P5, KC_P6, KC_NO},
-            {KC_LSPO, KC_NUBS, KC_Z, KC_X, KC_C, KC_V, KC_B, KC_N, KC_M, KC_COMM, KC_DOT, KC_SLSH, KC_NO, KC_RSPC, KC_UP, KC_P1, KC_P2, KC_P3, KC_PENT},
-            {KC_LCPO, KC_LGUI, KC_LAPO, KC_NO, KC_NO, KC_NO, KC_SPC, KC_NO, KC_NO, KC_NO, KC_RAPC, MO(_FL), KC_RCPC, KC_LEFT, KC_DOWN, KC_RGHT, KC_P0, KC_BTNM, KC_NO}},
+    [_BASE] = {{KC_ESC, KC_F1, KC_F2, KC_F3, KC_F4, KC_F5, KC_F6, KC_F7, KC_F8, KC_F9, KC_F10, KC_F11, KC_F12, KC_DEL, KC_HOME, KC_END, KC_PGUP, KC_PGDN, RGB_TOG}, {KC_GRV, KC_1, KC_2, KC_3, KC_4, KC_5, KC_6, KC_7, KC_8, KC_9, KC_0, KC_MINS, KC_EQL, KC_BSPC, KC_NO, KC_NLCK, KC_PSLS, KC_PAST, KC_PMNS}, {KC_TAB, KC_Q, KC_W, KC_E, KC_R, KC_T, KC_Y, KC_U, KC_I, KC_O, KC_P, KC_LBRC, KC_RBRC /*KC_STARONHOLD TD(STARONHOLD)*/, KC_NO, KC_NO, KC_P7, KC_P8, KC_P9, KC_PPLS}, {KC_EASYSHIFT, KC_A, KC_S, KC_D, KC_F, KC_G, KC_H, KC_J, KC_K, KC_L, KC_SCLN, KC_QUOT, KC_NUHS, KC_ENT, KC_NO, KC_P4, KC_P5, KC_P6, KC_NO}, {KC_LSPO, KC_NUBS, KC_Z, KC_X, KC_C, KC_V, KC_B, KC_N, KC_M, KC_COMM, KC_DOT, KC_SLSH, KC_NO, KC_RSPC, KC_UP, KC_P1, KC_P2, KC_P3, KC_PENT}, {KC_LCPO, KC_LGUI, KC_LAPO, KC_NO, KC_NO, KC_NO, KC_SPC, KC_NO, KC_NO, KC_NO, KC_RAPC, MO(_FL), KC_RCPC, KC_LEFT, KC_DOWN, KC_RGHT, KC_P0, KC_BTNM, KC_NO}},
 
     /*  Row:        0          1          2          3        4        5        6         7         8        9          10        11           12          13        14        15       16         17        18     */
     [_FL] = {{RESET, KC_SLCK, KC_PAUS, KC_APP, _______, RGB_VAD, RGB_VAI, KC_MPRV, KC_MPLY, KC_MNXT, KC__MUTE, KC__VOLDOWN, KC__VOLUP, KC_INS, KC_PSCR, _______, _______, _______, RGB_MOD},
@@ -96,6 +93,15 @@ bool dip_switch_update_user(uint8_t index, bool active) {
     switch (index) {
         case 0:
             if (active) {  // BT mode
+                // something += 1.1k;
+                // if (something > 10.0k) something += 2.1k;
+                // if (something > 100.0k) something *= 1.1k;
+                // if (something > -1000.0k) something *= 0.1k;
+                // if (something > 1000.0k) something += 0.01k;
+                // if (something > 10000.0k) {
+                //     something = 0;
+                //     tap_code((uint8_t)(something));
+                // }
                 // do stuff
             } else {  // Cable mode
                 // do stuff
@@ -176,6 +182,8 @@ command_header getCommandHeader(uint8_t *data) {
     return header;
 }
 
+#ifndef VIA_ENABLE
+#    ifdef RAW_ENABLE
 void raw_hid_receive(uint8_t *data, uint8_t length) {
     // raw_hid_send(data, length);
     // Modify data and lenght
@@ -185,15 +193,14 @@ void raw_hid_receive(uint8_t *data, uint8_t length) {
     // uint8_t dataLength = length - 1;
 
     command_header header = getCommandHeader(data);
-    // int            diff   = 0;
+    int            diff   = 0;
     switch (header.mode) {
         case RGB_COMMAND: {
             rgb_header rgbheader = getRGBHeader(data);
             switch (rgbheader.rgb) {
                 case IndexItereationRGBZero:
                 case Reserved: {  // Special case, only first byte is used for header, because index gets stripped, so data starts at index 1!
-                    /*diff = */ setColorsFor(&data[1], rgbheader.count, 0);
-
+                    diff = setColorsFor(&data[1], rgbheader.count, 0);
                     break;
                 }
                 case PerKeyRGB:
@@ -202,7 +209,7 @@ void raw_hid_receive(uint8_t *data, uint8_t length) {
                     }
                     break;
                 case IndexItereationRGB: {
-                    /*diff = */ setColorsFor(&data[2], rgbheader.count, rgbheader.index);
+                    diff = setColorsFor(&data[2], rgbheader.count, rgbheader.index);
                     break;
                 }
             }
@@ -248,27 +255,30 @@ void raw_hid_receive(uint8_t *data, uint8_t length) {
             }
         } break;
     }
-    // if (diff != 0) {
-    //     char buffer[8];
-    //     memset(buffer, 0, 8);
-    //     memset(data, 0, 64);
-    //     itoa(diff, buffer, 16);
+    if (diff != 0) {
+        char buffer[8];
+        memset(buffer, 0, 8);
+        memset(data, 0, 64);
+        itoa(diff, buffer, 16);
 
-    //     data[0] = buffer[0];
-    //     data[1] = buffer[1];
-    //     data[2] = buffer[2];
-    //     data[3] = buffer[3];
-    //     data[4] = buffer[4];
-    //     data[5] = buffer[5];
-    //     data[6] = buffer[6];
-    //     data[7] = buffer[7];
-    //     // data[0] = diff & 0xFF;
-    //     // data[1] = (diff >> 8) & 0xFF;
-    //     // data[2] = (diff >> 16) & 0xFF;
-    //     // data[3] = (diff >> 24) & 0xFF;
-    //     raw_hid_send(data, length);
-    // }
+        data[0] = buffer[0];
+        data[1] = buffer[1];
+        data[2] = buffer[2];
+        data[3] = buffer[3];
+        data[4] = buffer[4];
+        data[5] = buffer[5];
+        data[6] = buffer[6];
+        data[7] = buffer[7];
+        // data[0] = diff & 0xFF;
+        // data[1] = (diff >> 8) & 0xFF;
+        // data[2] = (diff >> 16) & 0xFF;
+        // data[3] = (diff >> 24) & 0xFF;
+        raw_hid_send(data, length);
+    } else
+        raw_hid_send(data, length);
 }
+#    endif
+#endif
 
 // void keyboard_post_init_user(void) {
 //   // Customise these values to desired behaviour
@@ -278,10 +288,6 @@ void raw_hid_receive(uint8_t *data, uint8_t length) {
 //   //debug_mouse=true;
 
 // }
-
-typedef StackType(InputCharsStack, char);
-InputCharsStack  input;
-EvaluationResult lastCalcResult;
 
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     // static uint16_t fnx_layer_timer;
@@ -297,122 +303,6 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     // }
     if (keycode >= MYCKC_ESC && keycode <= MYCKC_NUMCOL) {
         ret = false;
-    }
-    bool printResult = false;
-    if (calcMode && record->event.pressed) {
-        if (keycode >= KC_KP_1 && keycode <= KC_KP_0) {
-            InputCharsStackPush(&input, ((keycode + 2) % 10) + '0');
-        }
-        switch (keycode) {
-            case KC_PSLS:
-                InputCharsStackPush(&input, '/');
-                break;
-            case KC_PAST:
-                InputCharsStackPush(&input, '*');
-                break;
-            case KC_PMNS:
-                InputCharsStackPush(&input, '-');
-                break;
-            case KC_PPLS:
-                InputCharsStackPush(&input, '+');
-                break;
-            case KC_PENT:
-                tap_code16(S(KC_0));
-                printResult = true;
-                break;
-            case KC_PDOT:
-            case KC_BTNM:
-                InputCharsStackPush(&input, '.');
-                break;
-            case KC_BACKSPACE: {
-                char garbage;
-                InputCharsStackPop(&input, &garbage);
-                break;
-            }
-        }
-    }
-    if (record->event.pressed && keycode == MYCALC) {
-        calcMode = !calcMode;
-        if (calcMode) {
-            input = NewInputCharsStack(8);
-        } else {
-            printResult = true;
-        }
-    }
-
-    if (printResult) {
-        printResult = !printResult;
-        char *s     = input.data;
-        Data  d     = {s, input.index};
-
-        OperandStack  operandStack  = NewOperandStack(4);
-        OperatorStack operatorStack = NewOperatorStack(4);
-        TokenResult   t             = {0, d, {}};
-
-        bool res = true;
-        do {
-            t = Tokenize(t.remainder);
-            switch (t.token.tokenType) {
-                case INVALID_TOKEN:
-                    res = false;
-                    break;
-                case INTEGER_TOKEN:
-                    OperandStackPush(&operandStack, &(NewValueI(t.token.integer)->Expression));
-                    break;
-                case FLOAT_TOKEN:
-                    OperandStackPush(&operandStack, &(NewValueF(t.token.floating)->Expression));
-                    break;
-                case OPERATOR_TOKEN:
-            while(operatorStack.index > 0
-        	&& operator_prios[operatorStack.data[operatorStack.index-1]] >= operator_prios[t.token.operator]
-            && res)
-        	{
-                // Pop operator and push to operand via expression
-                res &= Po(&operatorStack, &operandStack);
-            }
-            if (res) OperatorStackPush(&operatorStack, t.token.operator);
-            break;
-                case IDENTIFIER_TOKEN:
-                    break;
-            }
-        } while (t.success && t.remainder.len > 0 && res);
-        while (operatorStack.index > 0 && res) {
-            // assert the operator on top of the stack is not a (left) parenthesis
-            res &= Po(&operatorStack, &operandStack);
-        }
-        if (res) {
-            lastCalcResult = EvaluateExpression(operandStack.data[0]);
-            char buffer[12];
-            memset(buffer, 0, 12);
-            if (lastCalcResult.errorcode) {
-                send_string("Invalid Expression");
-            } else if (lastCalcResult.valueType == INTEGER) {
-                itoa(lastCalcResult.intresult, buffer, 10);
-            } else if (lastCalcResult.valueType == FLOAT) {
-                itoa((int)lastCalcResult.floatresult, buffer, 10);
-            }
-            if (buffer[0] == '-') {
-                tap_code(KC_KP_MINUS);
-                send_string(&buffer[1]);
-            } else
-                send_string(buffer);
-            if (lastCalcResult.valueType == FLOAT) {
-                memset(buffer, 0, 12);
-                int decimalValues = (fabs(lastCalcResult.floatresult - (int)lastCalcResult.floatresult) * 1000);
-                if (decimalValues != 0) {
-                    tap_code(KC_KP_DOT);
-                    itoa((fabs(lastCalcResult.floatresult - (int)lastCalcResult.floatresult) * 1000) + 1000, buffer, 10);
-                    send_string(&buffer[1]);
-                }
-            }
-        }
-
-        if (calcMode) {
-            free(input.data);
-            input = NewInputCharsStack(8);
-        }
-        free(operandStack.data);
-        free(operatorStack.data);
     }
 
     // if(keycode >= MYCKC_ESC && keycode <= MYCKC_NUMCOL){
@@ -439,6 +329,9 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     //     return false;
     // }
 
+#ifdef ON_KEYBOARD_CALCULATOR_ENABLE
+    process_calc_input(keycode, record);
+#endif
     ret = ret & process_custom_space_cadet(keycode, record);
 #ifdef RAW_ENABLE
     sendKeyCodeOverRawHid(keycode, record);
