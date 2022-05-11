@@ -30,6 +30,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #ifdef ON_KEYBOARD_CALCULATOR_ENABLE
 #    include "calc.c"
 #endif
+#ifdef OPENRGB_ENABLE
+#    include "openrgb.h"
+#endif
 
 extern bool      last_suspend_state;
 extern uint32_t *instscval;
@@ -197,22 +200,26 @@ void raw_hid_receive(uint8_t *data, uint8_t length) {
     switch (header.mode) {
         case RGB_COMMAND: {
             rgb_header rgbheader = getRGBHeader(data);
-            switch (rgbheader.rgb) {
-                case IndexItereationRGBZero:
-                case Reserved: {  // Special case, only first byte is used for header, because index gets stripped, so data starts at index 1!
-                    diff = setColorsFor(&data[1], rgbheader.count, 0);
-                    break;
-                }
-                case PerKeyRGB:
-                    for (size_t i = 0; i < rgbheader.count; i++) {
-                        rgb_matrix_set_color(data[i * 4 + 2], data[i * 4 + 3], data[i * 4 + 4], data[i * 4 + 5]);  // First 2 bytes always used
+
+            if (rgbheader.count == 0) {
+                raw_hid_receive_openrgb(data, length);
+            } else
+                switch (rgbheader.rgb) {
+                    case IndexItereationRGBZero:
+                    case Reserved: {  // Special case, only first byte is used for header, because index gets stripped, so data starts at index 1!
+                        diff = setColorsFor(&data[1], rgbheader.count, 0);
+                        break;
                     }
-                    break;
-                case IndexItereationRGB: {
-                    diff = setColorsFor(&data[2], rgbheader.count, rgbheader.index);
-                    break;
+                    case PerKeyRGB:
+                        for (size_t i = 0; i < rgbheader.count; i++) {
+                            rgb_matrix_set_color(data[i * 4 + 2], data[i * 4 + 3], data[i * 4 + 4], data[i * 4 + 5]);  // First 2 bytes always used
+                        }
+                        break;
+                    case IndexItereationRGB: {
+                        diff = setColorsFor(&data[2], rgbheader.count, rgbheader.index);
+                        break;
+                    }
                 }
-            }
             break;
         }
         case LAYER_COMMAND: {
