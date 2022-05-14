@@ -5,3 +5,5 @@ SRC += config_led.c
 # Custom RGB matrix handling
 RGB_MATRIX_ENABLE = yes
 RGB_MATRIX_DRIVER = SN32F24xB
+
+OPENRGB_ENABLE = yes
