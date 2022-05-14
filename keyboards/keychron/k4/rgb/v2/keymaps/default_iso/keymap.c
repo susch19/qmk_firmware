@@ -38,7 +38,8 @@ extern bool      last_suspend_state;
 extern uint32_t *instscval;
 
 // long long _Accum  something      = 0.0k;
-bool     suspend_state  = false;
+
+static bool is_suspended  = false;
 uint32_t lastLightLevel = 0;
 
 // const key_override_t space_key_override = ko_make_with_layers_and_negmods(MOD_MASK_SHIFT, KC_SPACE, KC_BACKSPACE, ~0, MOD_MASK_CAG);
@@ -185,9 +186,12 @@ command_header getCommandHeader(uint8_t *data) {
     return header;
 }
 
-#ifndef VIA_ENABLE
 #    ifdef RAW_ENABLE
+#ifndef VIA_ENABLE
 void raw_hid_receive(uint8_t *data, uint8_t length) {
+#else
+void raw_hid_receive_kb(uint8_t *data, uint8_t length) {
+#endif
     // raw_hid_send(data, length);
     // Modify data and lenght
     // return;
@@ -202,7 +206,9 @@ void raw_hid_receive(uint8_t *data, uint8_t length) {
             rgb_header rgbheader = getRGBHeader(data);
 
             if (rgbheader.count == 0) {
+                #if OPENRGB_ENABLE
                 raw_hid_receive_openrgb(data, length);
+                #endif
             } else
                 switch (rgbheader.rgb) {
                     case IndexItereationRGBZero:
@@ -280,11 +286,15 @@ void raw_hid_receive(uint8_t *data, uint8_t length) {
         // data[1] = (diff >> 8) & 0xFF;
         // data[2] = (diff >> 16) & 0xFF;
         // data[3] = (diff >> 24) & 0xFF;
+    #ifndef VIA_ENABLE
         raw_hid_send(data, length);
-    } else
-        raw_hid_send(data, length);
+    #endif
+    }
+    // #ifndef VIA_ENABLE
+    // else
+    //     raw_hid_send(data, length);
+    // #endif
 }
-#    endif
 #endif
 
 // void keyboard_post_init_user(void) {
@@ -354,24 +364,19 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 }
 
 bool led_update_user(led_t led_state) {
-    writePin(LED_NUM_LOCK_PIN, !led_state.num_lock && !last_suspend_state);
-    writePin(LED_CAPS_LOCK_PIN, led_state.caps_lock && !last_suspend_state);
+    writePin(LED_NUM_LOCK_PIN, !led_state.num_lock && !is_suspended);
+    writePin(LED_CAPS_LOCK_PIN, led_state.caps_lock && !is_suspended);
     return false;
 }
 
-void set_suspend_state(bool state) { suspend_state = state; }
-
-void suspend_power_down_kb(void) {
+void suspend_power_down_user(void) {
     rgb_matrix_set_suspend_state(true);
-    set_suspend_state(true);
 
     rgb_matrix_set_color_all(0, 0, 0);  // turn off all LEDs when suspending
-
-    suspend_power_down_user();
+    is_suspended = true;
 }
 
-void suspend_wakeup_init_kb(void) {
+void suspend_wakeup_init_user(void) {
     rgb_matrix_set_suspend_state(false);
-    set_suspend_state(false);
-    suspend_wakeup_init_user();
+    is_suspended = false;
 }

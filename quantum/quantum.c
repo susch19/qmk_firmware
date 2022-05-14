@@ -538,6 +538,7 @@ void suspend_power_down_quantum(void) {
     // run to ensure scanning occurs while suspended
     pointing_device_task();
 #    endif
+    suspend_power_down_kb();
 #endif
 }
 

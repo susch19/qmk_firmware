@@ -373,6 +373,10 @@ void raw_hid_receive(uint8_t *data, uint8_t length) {
             dynamic_keymap_set_buffer(offset, size, &command_data[3]);
             break;
         }
+        case 41:{
+            raw_hid_receive_kb(data, length);
+            // return; //Do not always answer
+        }
         default: {
             // The command ID is not known
             // Return the unhandled state
