@@ -11,3 +11,4 @@ endif
 SRC += custom_space_cadet.c
 # SRC += calc.c
 
+VIA_ENABLE = yes

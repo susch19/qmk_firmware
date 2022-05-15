@@ -41,7 +41,9 @@
         "xiosbase": "c",
         "algorithm": "c",
         "cstdlib": "c",
-        "cmath": "c"
+        "cmath": "c",
+        "iterator": "c",
+        "xmemory": "c"
     },
     "[markdown]": {
         "editor.trimAutoWhitespace": false,

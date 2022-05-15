@@ -17,6 +17,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 // #define PRINTF_SUPPORT_FLOAT
 // #define CHPRINTF_USE_FLOAT
 #define ON_KEYBOARD_CALCULATOR_ENABLE
+#define SEND_KEYS_RAW
+
 #include QMK_KEYBOARD_H
 #include "raw_hid.h"
 #include "print.h"
@@ -30,17 +32,19 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #ifdef ON_KEYBOARD_CALCULATOR_ENABLE
 #    include "calc.c"
 #endif
-#ifdef OPENRGB_ENABLE
-#    include "openrgb.h"
-#endif
+// #ifdef OPENRGB_ENABLE
+// #    include "openrgb.h"
+// #endif
 
 extern bool      last_suspend_state;
 extern uint32_t *instscval;
 
 // long long _Accum  something      = 0.0k;
 
-static bool is_suspended  = false;
-uint32_t lastLightLevel = 0;
+static bool is_suspended   = false;
+uint32_t    lastLightLevel = 0;
+static bool via_mode       = false;
+static bool openrgb_mode = false;
 
 // const key_override_t space_key_override = ko_make_with_layers_and_negmods(MOD_MASK_SHIFT, KC_SPACE, KC_BACKSPACE, ~0, MOD_MASK_CAG);
 // const key_override_t delete_key_override = ko_make_basic(MOD_MASK_SHIFT, KC_DELETE, KC_INSERT);
@@ -79,9 +83,9 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     /*  Row:        0          1          2          3        4        5        6         7         8        9          10        11           12          13        14        15       16         17        18     */
     [_FL] = {{RESET, KC_SLCK, KC_PAUS, KC_APP, _______, RGB_VAD, RGB_VAI, KC_MPRV, KC_MPLY, KC_MNXT, KC__MUTE, KC__VOLDOWN, KC__VOLUP, KC_INS, KC_PSCR, _______, _______, _______, RGB_MOD},
              {_______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, KC_NO, _______, _______, RGB_MODE_RAINBOW, RGB_HUI},
-             {CLEAR_MODS, _______, _______, _______, _______, MYCALC, _______, _______, _______, _______, KC_PSCR, _______, _______, _______, KC_NO, RGB_MODE_XMAS, RGB_MODE_GRADIENT, RGB_MODE_RGBTEST, _______},
+             {CLEAR_MODS, _______, _______, _______, MYOPENRGB, MYCALC, _______, _______, _______, _______, KC_PSCR, _______, _______, _______, KC_NO, RGB_MODE_XMAS, RGB_MODE_GRADIENT, RGB_MODE_RGBTEST, _______},
              {KC_CAPS, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, KC_NO, RGB_MODE_SWIRL, RGB_MODE_SNAKE, RGB_MODE_KNIGHT, KC_NO},
-             {KC_LSFT, _______, _______, _______, _______, _______, _______, _______, MG_NKRO, _______, _______, KC_APP, KC_NO, KC_RSFT, RGB_SPI, RGB_MODE_PLAIN, RGB_MODE_BREATHE, RGB_MODE_RAINBOW, RGB_SAI},
+             {KC_LSFT, _______, _______, _______, _______, MYVIA, _______, _______, MG_NKRO, _______, _______, KC_APP, KC_NO, KC_RSFT, RGB_SPI, RGB_MODE_PLAIN, RGB_MODE_BREATHE, RGB_MODE_RAINBOW, RGB_SAI},
              {_______, KC_LALT, KC_LGUI, KC_NO, KC_NO, KC_NO, _______, KC_NO, KC_NO, KC_NO, LCLS(KC_M), MO(_FL), LCLS(KC_U), _______, RGB_SPD, _______, RGB_MODE_TWINKLE, _______, KC_NO}},
 
     [_MYCKC] = {{MYCKC_ESC, MYCKC_F1, MYCKC_F2, MYCKC_F3, MYCKC_F4, MYCKC_F5, MYCKC_F6, MYCKC_F7, MYCKC_F8, MYCKC_F9, MYCKC_F10, MYCKC_F11, MYCKC_F12, MYCKC_DEL, MYCKC_HOME, MYCKC_END, MYCKC_PGUP, MYCKC_PGDN, MYCKC_RGB},
@@ -99,7 +103,7 @@ bool dip_switch_update_user(uint8_t index, bool active) {
             if (active) {  // BT mode
                 // something += 1.1k;
                 // if (something > 10.0k) something += 2.1k;
-                // if (something > 100.0k) something *= 1.1k;
+                // if (something > 100.0k) something *= 1.1k;d
                 // if (something > -1000.0k) something *= 0.1k;
                 // if (something > 1000.0k) something += 0.01k;
                 // if (something > 10000.0k) {
@@ -186,12 +190,11 @@ command_header getCommandHeader(uint8_t *data) {
     return header;
 }
 
-#    ifdef RAW_ENABLE
-#ifndef VIA_ENABLE
+__attribute__((weak)) void raw_hid_receive_via(uint8_t *data, uint8_t length) { return; }
+__attribute__((weak)) void raw_hid_receive_openrgb(uint8_t *data, uint8_t length) { return; }
+
+#ifdef RAW_ENABLE
 void raw_hid_receive(uint8_t *data, uint8_t length) {
-#else
-void raw_hid_receive_kb(uint8_t *data, uint8_t length) {
-#endif
     // raw_hid_send(data, length);
     // Modify data and lenght
     // return;
@@ -199,16 +202,26 @@ void raw_hid_receive_kb(uint8_t *data, uint8_t length) {
     // return;
     // uint8_t dataLength = length - 1;
 
+#    if VIA_ENABLE
+    if (via_mode) {
+        raw_hid_receive_via(data, length);
+        return;
+    }
+#    endif
+#    if OPENRGB_ENABLE
+    if (openrgb_mode) {
+        raw_hid_receive_openrgb(data, length);
+        return;
+    }
+#    endif
+
     command_header header = getCommandHeader(data);
     int            diff   = 0;
     switch (header.mode) {
         case RGB_COMMAND: {
             rgb_header rgbheader = getRGBHeader(data);
 
-            if (rgbheader.count == 0) {
-                #if OPENRGB_ENABLE
-                raw_hid_receive_openrgb(data, length);
-                #endif
+            if (rgbheader.rgb == 0 && (rgbheader.count < 20 || rgbheader.count > 21)) {
             } else
                 switch (rgbheader.rgb) {
                     case IndexItereationRGBZero:
@@ -286,9 +299,9 @@ void raw_hid_receive_kb(uint8_t *data, uint8_t length) {
         // data[1] = (diff >> 8) & 0xFF;
         // data[2] = (diff >> 16) & 0xFF;
         // data[3] = (diff >> 24) & 0xFF;
-    #ifndef VIA_ENABLE
+#    ifndef VIA_ENABLE
         raw_hid_send(data, length);
-    #endif
+#    endif
     }
     // #ifndef VIA_ENABLE
     // else
@@ -314,6 +327,13 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
         register_mods(0xFF);
         unregister_mods(0xFF);
     }
+    if (keycode == MYVIA && record->event.pressed) {
+        via_mode = !via_mode;
+    }
+    if (keycode == MYOPENRGB && record->event.pressed) {
+        openrgb_mode = !openrgb_mode;
+    }
+
     // if(keycode >= (0x5700 | BETTERNUM) && keycode <= (0x5700 | STARONHOLD))
     // {
     //     return true;

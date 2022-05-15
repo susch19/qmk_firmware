@@ -15,6 +15,8 @@ enum my_keycodes {
     KC_BTNM,
     KC_STARONHOLD,
     CLEAR_MODS,
+    MYVIA,
+    MYOPENRGB,
     KC_EASYSHIFT = 0x5FFE,
     TD_EASYSHIFT = 0x5FFF,
     MYCKC_ESC = 0x6000, //6000 - 5DA6 => 602 Keys before
