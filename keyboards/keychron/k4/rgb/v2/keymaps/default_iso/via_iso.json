@@ -2,7 +2,15 @@
     "name": "Keychron K4 ISO",
     "vendorId": "0x3434",
     "productId": "0xFE07",
-    "lighting": "none",
+    "lighting": {
+        "extends": "qmk_rgblight",
+
+        "supportedLightingValues": [
+          128,
+          129,
+          131
+        ]
+      },
     "matrix": {
         "rows": 6,
         "cols": 19

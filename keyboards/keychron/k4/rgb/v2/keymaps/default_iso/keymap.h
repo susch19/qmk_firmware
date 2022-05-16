@@ -2,16 +2,20 @@
 #include QMK_KEYBOARD_H
 
 #ifndef RAW_EPSIZE
-#define RAW_EPSIZE 64
+#    define RAW_EPSIZE 64
 #endif
 
 #ifndef KEYMAP_ISO
-#define KEYMAP_ISO
+#    define KEYMAP_ISO
 #endif
 
-enum layer_names { _BASE = 0, _FL, _MYCKC};
+extern bool is_suspended;
+extern bool via_mode;
+extern bool openrgb_mode;
+
+enum layer_names { _BASE = 0, _FL, _D1, _D2, _MYCKC };
 enum my_keycodes {
-    MYCALC= SAFE_RANGE,
+    MYCALC = SAFE_RANGE,
     KC_BTNM,
     KC_STARONHOLD,
     CLEAR_MODS,
@@ -19,7 +23,7 @@ enum my_keycodes {
     MYOPENRGB,
     KC_EASYSHIFT = 0x5FFE,
     TD_EASYSHIFT = 0x5FFF,
-    MYCKC_ESC = 0x6000, //6000 - 5DA6 => 602 Keys before
+    MYCKC_ESC    = 0x6000,  // 6000 - 5DA6 => 602 Keys before
     MYCKC_F1,
     MYCKC_F2,
     MYCKC_F3,
@@ -129,6 +133,5 @@ enum my_keycodes {
 #endif
 
 #ifndef CustomLayer
-    #define CustomLayer(keycode) (keycode == 0x5FFF  ? _MYCKC : -1);
+#    define CustomLayer(keycode) (keycode == 0x5FFF ? _MYCKC : -1);
 #endif
-

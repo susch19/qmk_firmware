@@ -38,13 +38,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 extern bool      last_suspend_state;
 extern uint32_t *instscval;
-
+bool is_suspended = false;
+bool via_mode     = false;
+bool openrgb_mode = false;
 // long long _Accum  something      = 0.0k;
 
-static bool is_suspended   = false;
 uint32_t    lastLightLevel = 0;
-static bool via_mode       = false;
-static bool openrgb_mode = false;
+
 
 // const key_override_t space_key_override = ko_make_with_layers_and_negmods(MOD_MASK_SHIFT, KC_SPACE, KC_BACKSPACE, ~0, MOD_MASK_CAG);
 // const key_override_t delete_key_override = ko_make_basic(MOD_MASK_SHIFT, KC_DELETE, KC_INSERT);
@@ -60,6 +60,7 @@ static bool openrgb_mode = false;
 // #pragma endregion TapDance
 
 #define MG_NKRO MAGIC_TOGGLE_NKRO
+
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
@@ -82,6 +83,20 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
     /*  Row:        0          1          2          3        4        5        6         7         8        9          10        11           12          13        14        15       16         17        18     */
     [_FL] = {{RESET, KC_SLCK, KC_PAUS, KC_APP, _______, RGB_VAD, RGB_VAI, KC_MPRV, KC_MPLY, KC_MNXT, KC__MUTE, KC__VOLDOWN, KC__VOLUP, KC_INS, KC_PSCR, _______, _______, _______, RGB_MOD},
+             {_______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, KC_NO, _______, _______, RGB_MODE_RAINBOW, RGB_HUI},
+             {CLEAR_MODS, _______, _______, _______, MYOPENRGB, MYCALC, _______, _______, _______, _______, KC_PSCR, _______, _______, _______, KC_NO, RGB_MODE_XMAS, RGB_MODE_GRADIENT, RGB_MODE_RGBTEST, _______},
+             {KC_CAPS, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, KC_NO, RGB_MODE_SWIRL, RGB_MODE_SNAKE, RGB_MODE_KNIGHT, KC_NO},
+             {KC_LSFT, _______, _______, _______, _______, MYVIA, _______, _______, MG_NKRO, _______, _______, KC_APP, KC_NO, KC_RSFT, RGB_SPI, RGB_MODE_PLAIN, RGB_MODE_BREATHE, RGB_MODE_RAINBOW, RGB_SAI},
+             {_______, KC_LALT, KC_LGUI, KC_NO, KC_NO, KC_NO, _______, KC_NO, KC_NO, KC_NO, LCLS(KC_M), MO(_FL), LCLS(KC_U), _______, RGB_SPD, _______, RGB_MODE_TWINKLE, _______, KC_NO}},
+
+    [_D1] = {{RESET, KC_SLCK, KC_PAUS, KC_APP, _______, RGB_VAD, RGB_VAI, KC_MPRV, KC_MPLY, KC_MNXT, KC__MUTE, KC__VOLDOWN, KC__VOLUP, KC_INS, KC_PSCR, _______, _______, _______, RGB_MOD},
+             {_______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, KC_NO, _______, _______, RGB_MODE_RAINBOW, RGB_HUI},
+             {CLEAR_MODS, _______, _______, _______, MYOPENRGB, MYCALC, _______, _______, _______, _______, KC_PSCR, _______, _______, _______, KC_NO, RGB_MODE_XMAS, RGB_MODE_GRADIENT, RGB_MODE_RGBTEST, _______},
+             {KC_CAPS, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, KC_NO, RGB_MODE_SWIRL, RGB_MODE_SNAKE, RGB_MODE_KNIGHT, KC_NO},
+             {KC_LSFT, _______, _______, _______, _______, MYVIA, _______, _______, MG_NKRO, _______, _______, KC_APP, KC_NO, KC_RSFT, RGB_SPI, RGB_MODE_PLAIN, RGB_MODE_BREATHE, RGB_MODE_RAINBOW, RGB_SAI},
+             {_______, KC_LALT, KC_LGUI, KC_NO, KC_NO, KC_NO, _______, KC_NO, KC_NO, KC_NO, LCLS(KC_M), MO(_FL), LCLS(KC_U), _______, RGB_SPD, _______, RGB_MODE_TWINKLE, _______, KC_NO}},
+
+    [_D2] = {{RESET, KC_SLCK, KC_PAUS, KC_APP, _______, RGB_VAD, RGB_VAI, KC_MPRV, KC_MPLY, KC_MNXT, KC__MUTE, KC__VOLDOWN, KC__VOLUP, KC_INS, KC_PSCR, _______, _______, _______, RGB_MOD},
              {_______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, KC_NO, _______, _______, RGB_MODE_RAINBOW, RGB_HUI},
              {CLEAR_MODS, _______, _______, _______, MYOPENRGB, MYCALC, _______, _______, _______, _______, KC_PSCR, _______, _______, _______, KC_NO, RGB_MODE_XMAS, RGB_MODE_GRADIENT, RGB_MODE_RGBTEST, _______},
              {KC_CAPS, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, KC_NO, RGB_MODE_SWIRL, RGB_MODE_SNAKE, RGB_MODE_KNIGHT, KC_NO},

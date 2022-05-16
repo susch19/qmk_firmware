@@ -5,10 +5,11 @@
 #include "raw_hid_custom.h"
 #include "keymap.h"
 
-#undef SEND_KEYS_RAW
+#define SEND_KEYS_RAW
 
 void sendKeyCodeOverRawHid(uint16_t keycode, keyrecord_t* record) {
 #ifdef SEND_KEYS_RAW
+    if (via_mode) return;
     uint8_t data[RAW_EPSIZE];
     data[0] = OTHER_COMMAND;
     data[1] = CustomKeyCode;
