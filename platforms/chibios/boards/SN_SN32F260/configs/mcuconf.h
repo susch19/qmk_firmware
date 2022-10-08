@@ -40,16 +40,26 @@
 /*
  * CT driver system settings.
  */
-// Defaults are correct
+#define SN32_HAS_CT16B0 TRUE
+#define SN32_HAS_CT16B1 TRUE
 /*
  * PWM driver system settings.
  */
 #define SN32_PWM_USE_CT16B1 TRUE
 #define SN32_PWM_NO_RESET TRUE
 /*
+ * SN driver system settings.
+ */
+#define SN32_HAS_GPIOA TRUE
+#define SN32_HAS_GPIOB TRUE
+#define SN32_HAS_GPIOC TRUE
+#define SN32_HAS_GPIOD TRUE
+
+/*
  * USB driver system settings.
  */
-// Defaults are correct
+#define SN32_HAS_USB TRUE
+#define SN32_USB_USE_USB1 TRUE
 
 /*
  * System Clock settings.
