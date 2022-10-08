@@ -156,7 +156,7 @@
                 "unknown",
                 "usbasploader",
                 "wb32-dfu",
-                "sn32_dfu"
+                "sn32-dfu"
             ]
         },
         "bootloader_instructions": {
