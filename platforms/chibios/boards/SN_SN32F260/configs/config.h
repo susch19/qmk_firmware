@@ -18,3 +18,5 @@
 
 #define RAW_IN_CAPACITY    1
 #define RAW_OUT_CAPACITY   1
+
+#include_next <config.h>

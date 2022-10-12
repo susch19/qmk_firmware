@@ -54,8 +54,6 @@
 }
 #define PORT_IDLE_THREAD_STACK_SIZE     0
 #define PORT_INT_REQUIRED_STACK         0
-#define RAW_IN_CAPACITY                 1
-#define RAW_OUT_CAPACITY                1
 
 /* can't call sleep without the idle thread, must override related functions */
 #if CH_CFG_NO_IDLE_THREAD == TRUE
