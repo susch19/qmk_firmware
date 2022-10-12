@@ -23,15 +23,5 @@
 
 #define CH_CFG_ST_TIMEDELTA 0
 
-#define CH_CFG_USE_TIMESTAMP FALSE
-
-#define CH_CFG_USE_WAITEXIT TRUE
-
-#define CH_CFG_USE_CONDVARS TRUE
-
-#define CH_CFG_USE_MESSAGES TRUE
-
-#define CH_CFG_USE_MEMCORE FALSE
-
 #include_next <chconf.h>
 

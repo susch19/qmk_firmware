@@ -25,10 +25,6 @@
 
 #define CH_CFG_ST_TIMEDELTA 0
 
-#define CH_CFG_USE_TIMESTAMP FALSE
-
-#define CH_CFG_USE_WAITEXIT TRUE
-
 #include_next <chconf.h>
 
 #undef CH_CFG_IDLE_ENTER_HOOK
