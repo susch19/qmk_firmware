@@ -69,3 +69,4 @@
 
 
 #define SPACE_CADET_DISABLE 1
+// #define CH_CFG_ST_FREQUENCY 750000
