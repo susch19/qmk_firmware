@@ -46,10 +46,10 @@
 #endif
 
 #ifndef DYNAMIC_KEYMAP_EEPROM_MAX_ADDR
-#    define DYNAMIC_KEYMAP_EEPROM_MAX_ADDR (TOTAL_EEPROM_BYTE_COUNT - 1)
+#    define DYNAMIC_KEYMAP_EEPROM_MAX_ADDR (TOTAL_EEPROM_BYTE_COUNT)
 #endif
 
-#if DYNAMIC_KEYMAP_EEPROM_MAX_ADDR > (TOTAL_EEPROM_BYTE_COUNT - 1)
+#if DYNAMIC_KEYMAP_EEPROM_MAX_ADDR > (TOTAL_EEPROM_BYTE_COUNT)
 #    pragma message STR(DYNAMIC_KEYMAP_EEPROM_MAX_ADDR) " > " STR((TOTAL_EEPROM_BYTE_COUNT - 1))
 #    error DYNAMIC_KEYMAP_EEPROM_MAX_ADDR is configured to use more space than what is available for the selected EEPROM driver
 #endif
@@ -86,6 +86,9 @@
 // The keyboard should override DYNAMIC_KEYMAP_LAYER_COUNT to reduce it,
 // or DYNAMIC_KEYMAP_EEPROM_MAX_ADDR to increase it, *only if* the microcontroller has
 // more than the default.
+#pragma message STR(DYNAMIC_KEYMAP_EEPROM_MAX_ADDR)
+#pragma message STR(DYNAMIC_KEYMAP_MACRO_EEPROM_ADDR)
+
 _Static_assert((DYNAMIC_KEYMAP_EEPROM_MAX_ADDR) - (DYNAMIC_KEYMAP_MACRO_EEPROM_ADDR) >= 100, "Dynamic keymaps are configured to use more EEPROM than is available.");
 
 // Dynamic macros are stored after the keymaps and use what is available
