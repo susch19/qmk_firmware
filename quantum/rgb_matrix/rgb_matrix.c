@@ -60,6 +60,70 @@ __attribute__((weak)) RGB rgb_matrix_hsv_to_rgb(HSV hsv) {
 // -----End rgb effect includes macros-------
 // ------------------------------------------
 
+#ifndef RGB_MATRIX_TIMEOUT
+#    define RGB_MATRIX_TIMEOUT 0
+#endif
+
+#if !defined(RGB_MATRIX_MAXIMUM_BRIGHTNESS) || RGB_MATRIX_MAXIMUM_BRIGHTNESS > UINT8_MAX
+#    undef RGB_MATRIX_MAXIMUM_BRIGHTNESS
+#    define RGB_MATRIX_MAXIMUM_BRIGHTNESS UINT8_MAX
+#endif
+
+#if !defined(RGB_MATRIX_HUE_STEP)
+#    define RGB_MATRIX_HUE_STEP 8
+#endif
+
+#if !defined(RGB_MATRIX_SAT_STEP)
+#    define RGB_MATRIX_SAT_STEP 16
+#endif
+
+#if !defined(RGB_MATRIX_VAL_STEP)
+#    define RGB_MATRIX_VAL_STEP 16
+#endif
+
+#if !defined(RGB_MATRIX_SPD_STEP)
+#    define RGB_MATRIX_SPD_STEP 16
+#endif
+
+#if !defined(RGB_MATRIX_STARTUP_MODE)
+#    ifdef ENABLE_RGB_MATRIX_CYCLE_LEFT_RIGHT
+#        define RGB_MATRIX_STARTUP_MODE RGB_MATRIX_CYCLE_LEFT_RIGHT
+#    else
+// fallback to solid colors if RGB_MATRIX_CYCLE_LEFT_RIGHT is disabled in userspace
+#        define RGB_MATRIX_STARTUP_MODE RGB_MATRIX_SOLID_COLOR
+#    endif
+#endif
+
+
+#if !defined(RGB_MATRIX_STARTUP_MODE)
+#    ifdef OPENRGB_ENABLE
+#        define RGB_MATRIX_STARTUP_MODE RGB_MATRIX_OPENRGB_DIRECT
+#    else
+#        ifndef DISABLE_RGB_MATRIX_CYCLE_LEFT_RIGHT
+#            define RGB_MATRIX_STARTUP_MODE RGB_MATRIX_CYCLE_LEFT_RIGHT
+#        else
+// fallback to solid colors if RGB_MATRIX_CYCLE_LEFT_RIGHT is disabled in userspace
+#            define RGB_MATRIX_STARTUP_MODE RGB_MATRIX_SOLID_COLOR
+#        endif
+#    endif
+#endif
+
+#if !defined(RGB_MATRIX_STARTUP_HUE)
+#    define RGB_MATRIX_STARTUP_HUE 0
+#endif
+
+#if !defined(RGB_MATRIX_STARTUP_SAT)
+#    define RGB_MATRIX_STARTUP_SAT UINT8_MAX
+#endif
+
+#if !defined(RGB_MATRIX_STARTUP_VAL)
+#    define RGB_MATRIX_STARTUP_VAL RGB_MATRIX_MAXIMUM_BRIGHTNESS
+#endif
+
+#if !defined(RGB_MATRIX_STARTUP_SPD)
+#    define RGB_MATRIX_STARTUP_SPD UINT8_MAX / 2
+#endif
+
 // globals
 rgb_config_t rgb_matrix_config; // TODO: would like to prefix this with g_ for global consistancy, do this in another pr
 uint32_t     g_rgb_timer;
