@@ -146,6 +146,7 @@ bool rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {
 __attribute__((weak)) bool rgb_matrix_indicators_keymap(void) {
     return true;
 }
+
 bool rgb_matrix_indicators_user(void) {
     return rgb_matrix_indicators_keymap();
 }

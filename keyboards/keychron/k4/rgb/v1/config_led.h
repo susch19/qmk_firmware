@@ -1,5 +1,5 @@
 /*
-Copyright 2018 Massdrop Inc.
+Copyright 2021 Dimitris Mantzouranis <d3xter93@gmail.com>
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -15,17 +15,17 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef _UDI_DEVICE_EPSIZE_H_
-#define _UDI_DEVICE_EPSIZE_H_
+#pragma once
 
-#define KEYBOARD_EPSIZE 8
-#define MOUSE_EPSIZE 8
-#define EXTRAKEY_EPSIZE 8
-#define RAW_EPSIZE 64
-#define CONSOLE_EPSIZE 32
-#define NKRO_EPSIZE 32
-#define MIDI_STREAM_EPSIZE 64
-#define CDC_NOTIFICATION_EPSIZE 8
-#define CDC_EPSIZE 16
+// Backlight configuration
+#define BACKLIGHT_LEVELS 8
 
-#endif //_UDI_DEVICE_EPSIZE_H_
+#define LED_MATRIX_ROWS MATRIX_ROWS
+#define LED_MATRIX_ROW_CHANNELS 3
+#define LED_MATRIX_ROWS_HW (LED_MATRIX_ROWS * LED_MATRIX_ROW_CHANNELS)
+#define LED_MATRIX_ROW_PINS { C3, C1, C0, C6, C5, C4, C9, C8, C7, C12, C11, C10, B13, C14, C13, B14, B15, D3 }
+
+#define LED_MATRIX_COLS MATRIX_COLS
+#define LED_MATRIX_COL_PINS MATRIX_COL_PINS
+
+#define DRIVER_LED_TOTAL (100)
