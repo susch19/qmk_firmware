@@ -37,7 +37,7 @@ WEAR_LEVELING_DRIVER = sn32_flash
 
 VIA_ENABLE = yes
 OPENRGB_ENABLE = yes
-CUSTOM_MATRIX = shared
+CUSTOM_MATRIX = yes
 # # project specific files
 # Build ansi by default
 # DEFAULT_FOLDER = keychron/k14/rgb/ansi
