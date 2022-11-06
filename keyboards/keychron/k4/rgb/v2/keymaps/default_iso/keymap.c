@@ -36,8 +36,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 extern bool      last_suspend_state;
 extern uint32_t *instscval;
 bool is_suspended = false;
-bool via_mode     = true;
-bool openrgb_mode = false;
+bool via_mode     = false;
+bool openrgb_mode = true;
+bool ack_enabled = false;
 // long long _Accum  something      = 0.0k;
 
 uint32_t    lastLightLevel = 0;
@@ -85,7 +86,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
     /*  Row:        0          1          2          3        4        5        6         7         8        9          10        11           12          13        14        15       16         17        18     */
     [_FL] = {{QK_BOOT, KC_SLCK, KC_PAUS, KC_APP, _______, RGB_VAD, RGB_VAI, KC_MPRV, KC_MPLY, KC_MNXT, KC_MUTE, KC_VOLD, KC_VOLU, KC_INS, KC_PSCR, _______, _______, _______, RGB_MOD},
-             {_______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, KC_NO, _______, _______, RGB_MODE_RAINBOW, RGB_HUI},
+             {MYACK, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, KC_NO, _______, _______, RGB_MODE_RAINBOW, RGB_HUI},
              {CLEAR_MODS, _______, _______, _______, MYOPENRGB, MYCALC, _______, _______, _______, _______, KC_PSCR, _______, _______, _______, KC_NO, RGB_MODE_XMAS, RGB_MODE_GRADIENT, RGB_MODE_RGBTEST, _______},
              {KC_CAPS, KC_NUHS, KC_NUBS, X_RO, X_ZKHK, _______, _______, _______, _______, _______, _______, _______, _______, _______, KC_NO, RGB_MODE_SWIRL, RGB_MODE_SNAKE, RGB_MODE_KNIGHT, KC_NO},
              {KC_LSFT, _______, _______, _______, KC_CALC, MYVIA, _______, _______, MG_NKRO, _______, _______, KC_APP, KC_NO, KC_RSFT, RGB_SPI, RGB_MODE_PLAIN, RGB_MODE_BREATHE, RGB_MODE_RAINBOW, RGB_SAI},
@@ -326,13 +327,10 @@ void raw_hid_receive(uint8_t *data, uint8_t length) {
         // data[1] = (diff >> 8) & 0xFF;
         // data[2] = (diff >> 16) & 0xFF;
         // data[3] = (diff >> 24) & 0xFF;
-#    ifndef VIA_ENABLE
-        raw_hid_send(data, length);
-#    endif
     }
     // #ifndef VIA_ENABLE
-    // else
-        // raw_hid_send(data, length);
+    if(ack_enabled)
+        raw_hid_send(data, length);
     // #endif
 }
 #endif
@@ -360,6 +358,10 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     if (keycode == MYOPENRGB && record->event.pressed) {
         openrgb_mode = !openrgb_mode;
     }
+    if (keycode == MYACK && record->event.pressed) {
+        ack_enabled = !ack_enabled;
+    }
+
 
     // if(keycode >= (0x5700 | BETTERNUM) && keycode <= (0x5700 | STARONHOLD))
     // {

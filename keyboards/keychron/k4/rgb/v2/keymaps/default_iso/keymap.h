@@ -21,6 +21,7 @@ enum my_keycodes {
     CLEAR_MODS,
     MYVIA,
     MYOPENRGB,
+    MYACK,
     KC_EASYSHIFT = 0x5FFE,
     TD_EASYSHIFT = 0x5FFF,
     MYCKC_ESC    = 0x6000,  // 6000 - 5DA6 => 602 Keys before
