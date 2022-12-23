@@ -19,6 +19,8 @@
 
 /* USB Device descriptor parameter */
 #define VENDOR_ID       0x3434
+#include "config_common.h"
+#include "config_led.h"
 
 #define MANUFACTURER    "Keychron"
 #define PRODUCT         "K4v1 RGB"
@@ -34,6 +36,9 @@
 
 // Connects each switch in the dip switch to the GPIO pin of the MCU
 #define DIP_SWITCH_PINS { D5, D6 }
+#define USB_POLLING_INTERVAL_MS 1
+
+#define QMK_KEYS_PER_SCAN 4
 
 /* Debounce reduces chatter (unintended double-presses) - set 0 if debouncing is not needed */
 #define DEBOUNCE 5
@@ -99,3 +104,6 @@
 #define ENABLE_RGB_MATRIX_MULTISPLASH
 #define ENABLE_RGB_MATRIX_SOLID_SPLASH
 #define ENABLE_RGB_MATRIX_SOLID_MULTISPLASH
+// #define TRANSIENT_EEPROM_SIZE 1280
+// #define WEAR_LEVELING_BACKING_SIZE 3200
+// #define WEAR_LEVELING_SN32_EMULATION_PAGE_COUNT 40

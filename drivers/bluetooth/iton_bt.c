@@ -65,7 +65,7 @@ const SPIConfig iton_bt_spicfg = {
     .slave = true,
     .data_cb = iton_bt_data_cb,
     // SN32 specific
-    .ctrl0 = SPI_DATA_LENGTH(8),
+    .ctrl0 = (8<<8),
 };
 
 /**

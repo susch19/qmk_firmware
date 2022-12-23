@@ -1,3 +1,6 @@
+# project specific files
+# SRC = ../../../drivers/led/sn32/rgb_matrix_sn32f24xb.c
+SRC += config_led.c
 # MCU name
 MCU = SN32F248BF
 
@@ -30,5 +33,8 @@ DIP_SWITCH_ENABLE = yes
 RGB_MATRIX_ENABLE = yes
 RGB_MATRIX_DRIVER = SN32F24xB
 
+# VIA_ENABLE = yes
+# OPENRGB_ENABLE = yes
+# CUSTOM_MATRIX = shared
 # Build ansi by default
 DEFAULT_FOLDER = keychron/k4/rgb/ansi
