@@ -18,7 +18,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include QMK_KEYBOARD_H
 #include "raw_hid.h"
-#include "print.h"
+// #include "print.h"
 #include "commands.h"
 #ifdef TAP_DANCE_ENABLE
 #    include "tap_dance_custom.h"
@@ -91,9 +91,9 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
     /*  Row:        0          1          2          3        4        5        6         7         8        9          10        11           12          13        14        15       16         17        18     */
     [_FL] = {{QK_BOOT, _______, KC_PAUS, KC_APP, _______, RGB_VAD, RGB_VAI, KC_MPRV, KC_MPLY, KC_MNXT, KC_MUTE, KC_VOLD, KC_VOLU, KC_INS, KC_PSCR, _______, _______, _______, RGB_MOD},
-             {MYACK, BT_PROF1, BT_PROF2, BT_PROF3, BT_PAIR, _______, _______, _______, _______, _______, _______, _______, _______, _______, KC_NO, _______, _______, RGB_MODE_RAINBOW, RGB_HUI},
+             {MYACK, BT_PROF1, BT_PROF2, BT_PROF3, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, KC_NO, _______, _______, RGB_MODE_RAINBOW, RGB_HUI},
              {CLEAR_MODS, _______, _______, _______, MYOPENRGB, MYCALC, _______, _______, _______, _______, KC_PSCR, _______, _______, _______, KC_NO, RGB_MODE_XMAS, RGB_MODE_GRADIENT, RGB_MODE_RGBTEST, _______},
-             {KC_CAPS, KC_NUHS, KC_NUBS, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, KC_NO, RGB_MODE_SWIRL, RGB_MODE_SNAKE, RGB_MODE_KNIGHT, KC_NO},
+             {KC_CAPS, KC_NUHS, KC_NUBS, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, BT_PAIR, KC_NO, RGB_MODE_SWIRL, RGB_MODE_SNAKE, RGB_MODE_KNIGHT, KC_NO},
              {KC_LSFT, _______, _______, _______, KC_CALC, MYVIA, _______, _______, MG_NKRO, _______, _______, KC_APP, KC_NO, KC_RSFT, RGB_SPI, RGB_MODE_PLAIN, RGB_MODE_BREATHE, RGB_MODE_RAINBOW, RGB_SAI},
              {_______, KC_LALT, KC_LGUI, KC_NO, KC_NO, KC_NO, _______, KC_NO, KC_NO, KC_NO, C(S(KC_M)), MO(_FL), C(S(KC_U)), _______, RGB_SPD, _______, RGB_MODE_TWINKLE, _______, KC_NO}},
 
@@ -104,21 +104,23 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
              {KC_LSFT, _______, _______, _______, _______, MYVIA, _______, _______, MG_NKRO, _______, _______, KC_APP, KC_NO, KC_RSFT, RGB_SPI, RGB_MODE_PLAIN, RGB_MODE_BREATHE, RGB_MODE_RAINBOW, RGB_SAI},
              {_______, KC_LALT, KC_LGUI, KC_NO, KC_NO, KC_NO, _______, KC_NO, KC_NO, KC_NO, C(S(KC_M)), MO(_FL), C(S(KC_U)), _______, RGB_SPD, _______, RGB_MODE_TWINKLE, _______, KC_NO}},
 
-    [_D2] = {{QK_BOOT, _______, KC_PAUS, KC_APP, _______, RGB_VAD, RGB_VAI, KC_MPRV, KC_MPLY, KC_MNXT, KC_MUTE, KC_VOLD, KC_VOLU, KC_INS, KC_PSCR, _______, _______, _______, RGB_MOD},
-             {_______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, KC_NO, _______, _______, RGB_MODE_RAINBOW, RGB_HUI},
-             {CLEAR_MODS, _______, _______, _______, MYOPENRGB, MYCALC, _______, _______, _______, _______, KC_PSCR, _______, _______, _______, KC_NO, RGB_MODE_XMAS, RGB_MODE_GRADIENT, RGB_MODE_RGBTEST, _______},
-             {KC_CAPS, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, KC_NO, RGB_MODE_SWIRL, _______ , RGB_MODE_KNIGHT, KC_NO},
-             {KC_LSFT, _______, _______, _______, _______, MYVIA, _______, _______, MG_NKRO, _______, _______, KC_APP, KC_NO, KC_RSFT, RGB_SPI, RGB_MODE_PLAIN, RGB_MODE_BREATHE, RGB_MODE_RAINBOW, RGB_SAI},
-             {_______, KC_LALT, KC_LGUI, KC_NO, KC_NO, KC_NO, _______, KC_NO, KC_NO, KC_NO, C(S(KC_M)), MO(_FL), C(S(KC_U)), _______, RGB_SPD, _______, RGB_MODE_TWINKLE, _______, KC_NO}},
+    // [_D2] = {{QK_BOOT, _______, KC_PAUS, KC_APP, _______, RGB_VAD, RGB_VAI, KC_MPRV, KC_MPLY, KC_MNXT, KC_MUTE, KC_VOLD, KC_VOLU, KC_INS, KC_PSCR, _______, _______, _______, RGB_MOD},
+    //          {_______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, KC_NO, _______, _______, RGB_MODE_RAINBOW, RGB_HUI},
+    //          {CLEAR_MODS, _______, _______, _______, MYOPENRGB, MYCALC, _______, _______, _______, _______, KC_PSCR, _______, _______, _______, KC_NO, RGB_MODE_XMAS, RGB_MODE_GRADIENT, RGB_MODE_RGBTEST, _______},
+    //          {KC_CAPS, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, KC_NO, RGB_MODE_SWIRL, _______ , RGB_MODE_KNIGHT, KC_NO},
+    //          {KC_LSFT, _______, _______, _______, _______, MYVIA, _______, _______, MG_NKRO, _______, _______, KC_APP, KC_NO, KC_RSFT, RGB_SPI, RGB_MODE_PLAIN, RGB_MODE_BREATHE, RGB_MODE_RAINBOW, RGB_SAI},
+    //          {_______, KC_LALT, KC_LGUI, KC_NO, KC_NO, KC_NO, _______, KC_NO, KC_NO, KC_NO, C(S(KC_M)), MO(_FL), C(S(KC_U)), _______, RGB_SPD, _______, RGB_MODE_TWINKLE, _______, KC_NO}},
 
-    [_MYCKC] = {{MYCKC_ESC, MYCKC_F1, MYCKC_F2, MYCKC_F3, MYCKC_F4, MYCKC_F5, MYCKC_F6, MYCKC_F7, MYCKC_F8, MYCKC_F9, MYCKC_F10, MYCKC_F11, MYCKC_F12, MYCKC_DEL, MYCKC_HOME, MYCKC_END, MYCKC_PGUP, MYCKC_PGDN, MYCKC_RGB},
-                {MYCKC_GRV, MYCKC_1, MYCKC_2, MYCKC_3, MYCKC_4, MYCKC_5, MYCKC_6, MYCKC_7, MYCKC_8, MYCKC_9, MYCKC_0, MYCKC_MINS, MYCKC_EQL, MYCKC_BSPC, KC_NO, MYCKC_NLCK, MYCKC_PSLS, MYCKC_PAST, MYCKC_PMNS},
-                {MYCKC_TAB, MYCKC_Q, MYCKC_W, MYCKC_E, MYCKC_R, MYCKC_T, MYCKC_Y, MYCKC_U, MYCKC_I, MYCKC_O, MYCKC_P, MYCKC_LBRC, MYCKC_RBRC, KC_NO, KC_NO, MYCKC_P7, MYCKC_P8, MYCKC_P9, MYCKC_PPLS},
-                {MYCKC_CAPS, MYCKC_A, MYCKC_S, MYCKC_D, MYCKC_F, MYCKC_G, MYCKC_H, MYCKC_J, MYCKC_K, MYCKC_L, MYCKC_SCLN, MYCKC_QUOT, MYCKC_NUHS, MYCKC_ENT, KC_NO, MYCKC_P4, MYCKC_P5, MYCKC_P6, KC_NO},
-                {MYCKC_LSFT, MYCKC_NUBS, MYCKC_Z, MYCKC_X, MYCKC_C, MYCKC_V, MYCKC_B, MYCKC_N, MYCKC_M, MYCKC_COMM, MYCKC_DOT, MYCKC_SLSH, KC_NO, MYCKC_RSFT, MYCKC_UP, MYCKC_P1, MYCKC_P2, MYCKC_P3, MYCKC_PENT},
-                {MYCKC_LCTL, MYCKC_LGUI, MYCKC_LALT, KC_NO, KC_NO, KC_NO, MYCKC_SPC, KC_NO, KC_NO, KC_NO, MYCKC_RALT, MYCKC_FN, MYCKC_RCTL, MYCKC_LEFT, MYCKC_DOWN, MYCKC_RGHT, MYCKC_P0, MYCKC_NUMCOL, KC_NO}},
+     [_MYCKC] = {{MYCKC_ESC, MYCKC_F1, MYCKC_F2, MYCKC_F3, MYCKC_F4, MYCKC_F5, MYCKC_F6, MYCKC_F7, MYCKC_F8, MYCKC_F9, MYCKC_F10, MYCKC_F11, MYCKC_F12, MYCKC_DEL, MYCKC_HOME, MYCKC_END, MYCKC_PGUP, MYCKC_PGDN, MYCKC_RGB},
+                 {MYCKC_GRV, MYCKC_1, MYCKC_2, MYCKC_3, MYCKC_4, MYCKC_5, MYCKC_6, MYCKC_7, MYCKC_8, MYCKC_9, MYCKC_0, MYCKC_MINS, MYCKC_EQL, MYCKC_BSPC, KC_NO, MYCKC_NLCK, MYCKC_PSLS, MYCKC_PAST, MYCKC_PMNS},
+                 {MYCKC_TAB, MYCKC_Q, MYCKC_W, MYCKC_E, MYCKC_R, MYCKC_T, MYCKC_Y, MYCKC_U, MYCKC_I, MYCKC_O, MYCKC_P, MYCKC_LBRC, MYCKC_RBRC, KC_NO, KC_NO, MYCKC_P7, MYCKC_P8, MYCKC_P9, MYCKC_PPLS},
+                 {MYCKC_CAPS, MYCKC_A, MYCKC_S, MYCKC_D, MYCKC_F, MYCKC_G, MYCKC_H, MYCKC_J, MYCKC_K, MYCKC_L, MYCKC_SCLN, MYCKC_QUOT, MYCKC_NUHS, MYCKC_ENT, KC_NO, MYCKC_P4, MYCKC_P5, MYCKC_P6, KC_NO},
+                 {MYCKC_LSFT, MYCKC_NUBS, MYCKC_Z, MYCKC_X, MYCKC_C, MYCKC_V, MYCKC_B, MYCKC_N, MYCKC_M, MYCKC_COMM, MYCKC_DOT, MYCKC_SLSH, KC_NO, MYCKC_RSFT, MYCKC_UP, MYCKC_P1, MYCKC_P2, MYCKC_P3, MYCKC_PENT},
+                 {MYCKC_LCTL, MYCKC_LGUI, MYCKC_LALT, KC_NO, KC_NO, KC_NO, MYCKC_SPC, KC_NO, KC_NO, KC_NO, MYCKC_RALT, MYCKC_FN, MYCKC_RCTL, MYCKC_LEFT, MYCKC_DOWN, MYCKC_RGHT, MYCKC_P0, MYCKC_NUMCOL, KC_NO}},
 
 };
+
+bool iton_bt_initialized = false;
 
 bool dip_switch_update_user(uint8_t index, bool active) {
     switch (index) {
@@ -127,24 +129,12 @@ bool dip_switch_update_user(uint8_t index, bool active) {
             if (active) {
                 set_output(OUTPUT_USB);
             } else {
+
                 set_output(OUTPUT_NONE);
+
             }
             #endif
-            if (active) {  // BT mode
 
-                // something += 1.1k;
-                // if (something > 10.0k) something += 2.1k;
-                // if (something > 100.0k) something *= 1.1k;d
-                // if (something > -1000.0k) something *= 0.1k;
-                // if (something > 1000.0k) something += 0.01k;
-                // if (something > 10000.0k) {
-                //     something = 0;
-                //     tap_code((uint8_t)(something));
-                // }
-                // do stuff
-            } else {  // Cable mode
-                // do stuff
-            }
             break;
         case 1:
             if (active) {  // Mac/iOS mode
@@ -356,6 +346,21 @@ void raw_hid_receive(uint8_t *data, uint8_t length) {
 //   //debug_mouse=true;
 
 // }
+
+void iton_bt_connection_successful() {
+    set_output(OUTPUT_BLUETOOTH);
+}
+
+void iton_bt_enters_connection_state() {
+    uint8_t buf[] = {0xA6, 0x51, 0x62};
+    while (readPin(A0));
+
+    writePinHigh(A0);
+    chSysLockFromISR();
+    spiStartSendI(&SPID0, 3, &buf[0]);
+    chSysUnlockFromISR();
+}
+
 
 bool process_record_kb(uint16_t keycode, keyrecord_t *record) {
     if (record->event.pressed) {

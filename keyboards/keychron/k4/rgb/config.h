@@ -38,10 +38,11 @@
 #define DIP_SWITCH_PINS { D5, D6 }
 #define USB_POLLING_INTERVAL_MS 1
 
-#define QMK_KEYS_PER_SCAN 4
+// #define QMK_KEYS_PER_SCAN 4
 
 /* Debounce reduces chatter (unintended double-presses) - set 0 if debouncing is not needed */
 #define DEBOUNCE 5
+#include "config_common.h"
 
 /* LED Status indicators */
 #define LED_CAPS_LOCK_PIN B9

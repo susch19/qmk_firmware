@@ -1,4 +1,7 @@
 
+
+TOP_SYMBOLS = yes
+
 ifeq ($(strip $(TAP_DANCE_ENABLE)), yes)
     SRC += tap_dance_custom.c
 endif
