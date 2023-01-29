@@ -1,4 +1,4 @@
-// Copyright 2022 1Conan (@1Conan)
+// Copyright 2023 1Conan (@1Conan)
 // SPDX-License-Identifier: GPL-2.0-or-later
 
 #include <string.h>
@@ -82,13 +82,6 @@ void iton_bt_init(void) {
 
     SN32_SPI0->CTRL0 = SPI_DL_8 | SPI_SLAVE_MODE | SPI_AUTOSEL_ENABLE | SPI_SLAVE_DATA_OUTPUT_ENABLE;
 
-    // SN32_SPI0->CTRL0_b.DL = 7;
-    // SN32_SPI0->CTRL0_b.MS = true;
-    // SN32_SPI0->CTRL0_b.SDODIS = false;
-    // SN32_SPI0->CTRL0_b.SELDIS = false;
-
-    // already the default value
-    // SN32_SPI0->CTRL1 = 0;
     SN32_SPI0->CLKDIV = 2;
     SN32_SPI0->CTRL0_b.FRESET = 0b11;
 
@@ -151,10 +144,8 @@ void iton_bt_send_keyboard(report_keyboard_t *report) {
 OSAL_IRQ_HANDLER(SN32_SPI0_HANDLER) {
     OSAL_IRQ_PROLOGUE();
     if (SN32_SPI0->RIS_b.RXFIFOTHIF) {
-        chSysLockFromISR();
         uint8_t data = SN32_SPI0->DATA;
         SN32_SPI0->IC = 0b0100;
-        chSysUnlockFromISR();
 
         if (!readPin(ITON_BT_INT_LINE)) {
             if (++(iton_bt_index) >= iton_bt_count) {
@@ -184,10 +175,6 @@ OSAL_IRQ_HANDLER(SN32_SPI0_HANDLER) {
                             case batt_low_power_shutdown:
                                 iton_bt_battery_low_power_shutdown();
                                 break;
-                            case query_working_mode:
-                                break;
-                            case query_bt_name:
-                                break;
                         }
                         break;
                     case notif_bluetooth:
@@ -204,10 +191,6 @@ OSAL_IRQ_HANDLER(SN32_SPI0_HANDLER) {
                                 iton_bt_disconnected();
                                 break;
                             case bt_enters_connection:
-                                chSysLockFromISR();
-                                iton_bt_mode_bt();
-                                chSysUnlockFromISR();
-
                                 iton_bt_enters_connection_state();
                                 break;
                         }
