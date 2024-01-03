@@ -69,7 +69,7 @@
 #endif
 
 #ifndef CCLCK_KEYS
-#    define CCLCK_KEYS KC_LEFT_SHIFT, KC_TRANSPARENT, KC_TRANSPARENT, KC_CAPSLOCK
+#    define CCLCK_KEYS KC_LEFT_SHIFT, KC_TRANSPARENT, KC_TRANSPARENT, KC_CAPS_LOCK
 #endif
 
 #ifndef CSTARONHOLD_KEYS
@@ -100,7 +100,7 @@ void perform_custom_space_cadet(keyrecord_t *record, uint16_t sc_keycode, uint8_
 #ifdef SPACE_CADET_MODIFIER_CARRYOVER
         sc_mods = get_mods();
 #endif
-        if (IS_MOD(holdMod)) {
+        if (IS_MODIFIER_KEYCODE(holdMod)) {
             register_mods(MOD_BIT(holdMod));
         }
         else if CustomRegisterCodes(holdKey)
@@ -121,7 +121,7 @@ void perform_custom_space_cadet(keyrecord_t *record, uint16_t sc_keycode, uint8_
                 layer_off(layer);
             }
             if (holdMod != tapMod) {
-                if (IS_MOD(holdMod)) {
+                if (IS_MODIFIER_KEYCODE(holdMod)) {
                     unregister_mods(MOD_BIT(holdMod));
                     if(holdMod == KC_LEFT_ALT){
                         register_mods(MOD_BIT(holdMod));
@@ -129,7 +129,7 @@ void perform_custom_space_cadet(keyrecord_t *record, uint16_t sc_keycode, uint8_
 
                     }
                 }
-                if (IS_MOD(tapMod)) {
+                if (IS_MODIFIER_KEYCODE(tapMod)) {
                     register_mods(MOD_BIT(tapMod));
                 }
             }
@@ -140,12 +140,12 @@ void perform_custom_space_cadet(keyrecord_t *record, uint16_t sc_keycode, uint8_
 #ifdef SPACE_CADET_MODIFIER_CARRYOVER
             clear_weak_mods();
 #endif
-            if (IS_MOD(tapMod)) {
+            if (IS_MODIFIER_KEYCODE(tapMod)) {
                 unregister_mods(MOD_BIT(tapMod));
             }
         } else {
             tap_code16(holdKey);
-            if (IS_MOD(holdMod)) {
+            if (IS_MODIFIER_KEYCODE(holdMod)) {
                 unregister_mods(MOD_BIT(holdMod));
             }
             else if CustomRegisterCodes(holdKey)
@@ -162,31 +162,31 @@ void perform_custom_space_cadet(keyrecord_t *record, uint16_t sc_keycode, uint8_
 
 bool process_custom_space_cadet(uint16_t keycode, keyrecord_t *record) {
     switch (keycode) {
-        case KC_LSPO: {
+        case SU_LSPO: {
             perform_custom_space_cadet(record, keycode, CLSPO_KEYS);
             return false;
         }
-        case KC_RSPC: {
+        case SU_RSPC: {
             perform_custom_space_cadet(record, keycode, CRSPC_KEYS);
             return false;
         }
-        case KC_LCPO: {
+        case SU_LCBO: {
             perform_custom_space_cadet(record, keycode, CLCPO_KEYS);
             return false;
         }
-        case KC_RCPC: {
+        case SU_RCBC: {
             perform_custom_space_cadet(record, keycode, CRCPC_KEYS);
             return false;
         }
-        case KC_LAPO: {
+        case SU_LACBO: {
             perform_custom_space_cadet(record, keycode, CLAPO_KEYS);
             return false;
         }
-        case KC_RAPC: {
+        case SU_RACBC: {
             perform_custom_space_cadet(record, keycode, CRAPC_KEYS);
             return false;
         }
-        case KC_SFTENT: {
+        case SC_SENT: {
             perform_custom_space_cadet(record, keycode, CSFTENT_KEYS);
             return false;
         }

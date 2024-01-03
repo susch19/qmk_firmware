@@ -216,8 +216,66 @@ __attribute__((weak)) void via_custom_value_command_kb(uint8_t *data, uint8_t le
 // This is the default handler for custom value commands.
 // It routes commands with channel IDs to command handlers as such:
 //
-// raw_hid_send() is called at the end, with the same buffer, which was
-// possibly modified with returned values.
+//      id_qmk_backlight_channel    ->  via_qmk_backlight_command()
+//      id_qmk_rgblight_channel     ->  via_qmk_rgblight_command()
+//      id_qmk_rgb_matrix_channel   ->  via_qmk_rgb_matrix_command()
+//      id_qmk_led_matrix_channel   ->  via_qmk_led_matrix_command()
+//      id_qmk_audio_channel        ->  via_qmk_audio_command()
+//
+__attribute__((weak)) void via_custom_value_command(uint8_t *data, uint8_t length) {
+    // data = [ command_id, channel_id, value_id, value_data ]
+    uint8_t *channel_id = &(data[1]);
+
+#if defined(BACKLIGHT_ENABLE)
+    if (*channel_id == id_qmk_backlight_channel) {
+        via_qmk_backlight_command(data, length);
+        return;
+    }
+#endif // BACKLIGHT_ENABLE
+
+#if defined(RGBLIGHT_ENABLE)
+    if (*channel_id == id_qmk_rgblight_channel) {
+        via_qmk_rgblight_command(data, length);
+        return;
+    }
+#endif // RGBLIGHT_ENABLE
+
+#if defined(RGB_MATRIX_ENABLE)
+    if (*channel_id == id_qmk_rgb_matrix_channel) {
+        via_qmk_rgb_matrix_command(data, length);
+        return;
+    }
+#endif // RGB_MATRIX_ENABLE
+
+#if defined(LED_MATRIX_ENABLE)
+    if (*channel_id == id_qmk_led_matrix_channel) {
+        via_qmk_led_matrix_command(data, length);
+        return;
+    }
+#endif // LED_MATRIX_ENABLE
+
+#if defined(AUDIO_ENABLE)
+    if (*channel_id == id_qmk_audio_channel) {
+        via_qmk_audio_command(data, length);
+        return;
+    }
+#endif // AUDIO_ENABLE
+
+    (void)channel_id; // force use of variable
+
+    // If we haven't returned before here, then let the keyboard level code
+    // handle this, if it is overridden, otherwise by default, this will
+    // return the unhandled state.
+    via_custom_value_command_kb(data, length);
+}
+
+// Keyboard level code can override this, but shouldn't need to.
+// Controlling custom features should be done by overriding
+// via_custom_value_command_kb() instead.
+__attribute__((weak)) bool via_command_kb(uint8_t *data, uint8_t length) {
+    return false;
+}
+
 void raw_hid_receive_via(uint8_t *data, uint8_t length) {
     uint8_t *command_id   = &(data[0]);
     uint8_t *command_data = &(data[1]);
@@ -576,6 +634,11 @@ void via_qmk_rgblight_save(void) {
 
 #if defined(RGB_MATRIX_ENABLE)
 
+#    if !defined(RGB_MATRIX_MAXIMUM_BRIGHTNESS) || RGB_MATRIX_MAXIMUM_BRIGHTNESS > UINT8_MAX
+#        undef RGB_MATRIX_MAXIMUM_BRIGHTNESS
+#        define RGB_MATRIX_MAXIMUM_BRIGHTNESS UINT8_MAX
+#    endif
+
 void via_qmk_rgb_matrix_command(uint8_t *data, uint8_t length) {
     // data = [ command_id, channel_id, value_id, value_data ]
     uint8_t *command_id        = &(data[0]);
@@ -663,6 +726,11 @@ void via_qmk_rgb_matrix_save(void) {
 #endif // RGB_MATRIX_ENABLE
 
 #if defined(LED_MATRIX_ENABLE)
+
+#    if !defined(LED_MATRIX_MAXIMUM_BRIGHTNESS) || LED_MATRIX_MAXIMUM_BRIGHTNESS > UINT8_MAX
+#        undef LED_MATRIX_MAXIMUM_BRIGHTNESS
+#        define LED_MATRIX_MAXIMUM_BRIGHTNESS UINT8_MAX
+#    endif
 
 void via_qmk_led_matrix_command(uint8_t *data, uint8_t length) {
     // data = [ command_id, channel_id, value_id, value_data ]

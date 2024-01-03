@@ -5,7 +5,7 @@
 #include "raw_hid_custom.h"
 #include "keymap.h"
 
-// #define SEND_KEYS_RAW
+#define SEND_KEYS_RAW
 
 void sendKeyCodeOverRawHid(uint16_t keycode, keyrecord_t* record) {
 #ifdef SEND_KEYS_RAW

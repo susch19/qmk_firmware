@@ -140,7 +140,7 @@
                     {"matrix":[5, 16], "x":16, "y":5},
                     {"matrix":[5, 17], "x":17, "y":5}
                     ]
-                } 
+                }
         },
 
     "rgb_matrix": {
@@ -251,10 +251,10 @@
             "react_on_keyup": true,
             "sleep": true,
 
-        "animations": { 
-        "gradient_up_down": true,
+        "animations": {
+        "gradient_up_down": false,
         "gradient_left_right": true,
-        "breathing": true,
+        "breathing": false,
         "band_sat": true,
         "band_val": true,
         "band_pinwheel_sat": true,
@@ -263,25 +263,25 @@
         "band_spiral_val": true,
         "cycle_all": true,
         "cycle_left_right": true,
-        "cycle_up_down": true,
-        "cycle_out_in": true,
-        "cycle_out_in_dual": true,
+        "cycle_up_down": false,
+        "cycle_out_in": false,
+        "cycle_out_in_dual": false,
         "rainbow_moving_chevron": true,
-        "cycle_pinwheel": true,
-        "cycle_spiral": true,
-        "dual_beacon": true,
+        "cycle_pinwheel": false,
+        "cycle_spiral": false,
+        "dual_beacon": false,
         "rainbow_beacon": true,
         "rainbow_pinwheels": true,
-        "raindrops": true,
-        "jellybean_raindrops": true,
-        "hue_breathing": true,
+        "raindrops": false,
+        "jellybean_raindrops": false,
+        "hue_breathing": false,
         "hue_pendulum": true,
         "hue_wave": true,
         "pixel_fractal": true,
         "pixel_flow": true,
         "pixel_rain": true,
         "typing_heatmap": true,
-        "digital_rain": true,
+        "digital_rain": false,
         "solid_reactive_simple": true,
         "solid_reactive": true,
         "solid_reactive_wide": true,
