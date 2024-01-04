@@ -32,8 +32,8 @@
 /**
  * Driver Macros
  */
-#define HIGH_BITS(x)         ((uint8_t)(x >> 8))
-#define LOW_BITS(x)          ((uint8_t)(x & 0x00FF))
+#define HIGH_BITS(x) ((uint8_t)(x >> 8))
+#define LOW_BITS(x) ((uint8_t)(x & 0x00FF))
 
 /**
  * Function definitions
@@ -56,14 +56,14 @@ __attribute__((weak)) void iton_bt_enters_connection_state(void) {}
 /**
  * Driver variables
  */
-bool iton_bt_is_connected = false;
-uint8_t iton_bt_led_state = 0x00;
+bool    iton_bt_is_connected = false;
+uint8_t iton_bt_led_state    = 0x00;
 
 static uint8_t iton_bt_buffer[ITON_BT_BUFFER_LEN];
-uint8_t iton_bt_send_kb_last_key = 0x00;
+uint8_t        iton_bt_send_kb_last_key = 0x00;
 
 const SPIConfig iton_bt_spicfg = {
-    .slave = true,
+    .slave   = true,
     .data_cb = iton_bt_data_cb,
     // SN32 specific
     .ctrl0 = SPI_DATA_LENGTH(8),
@@ -90,14 +90,14 @@ static inline void iton_bt_rx_battery_notif(uint8_t data) {
             iton_bt_battery_level(data);
             break;
         case batt_wake_mcu:
-            #ifdef ITON_BT_ENABLE_ACK
+#    ifdef ITON_BT_ENABLE_ACK
             iton_bt_send_ack(control_bt, wake_ack);
-            #endif
+#    endif
             break;
         case batt_unknown:
-            #ifdef ITON_BT_ENABLE_ACK
+#    ifdef ITON_BT_ENABLE_ACK
             iton_bt_send_ack(control_bt, unknown_ack);
-            #endif
+#    endif
             break;
         case query_working_mode:
             break;
@@ -111,9 +111,9 @@ static inline void iton_bt_rx_bluetooth_notif(uint8_t data) {
         case bt_connection_success:
             iton_bt_is_connected = true;
 
-            #ifdef ITON_BT_ENABLE_ACK
+#    ifdef ITON_BT_ENABLE_ACK
             iton_bt_send_ack(control_bt, connect_ack);
-            #endif
+#    endif
 
             iton_bt_connection_successful();
             break;
@@ -123,9 +123,9 @@ static inline void iton_bt_rx_bluetooth_notif(uint8_t data) {
         case bt_disconected:
             iton_bt_is_connected = false;
 
-            #ifdef ITON_BT_ENABLE_ACK
+#    ifdef ITON_BT_ENABLE_ACK
             iton_bt_send_ack(control_bt, disconnect_ack);
-            #endif
+#    endif
 
             iton_bt_disconnected();
             break;
@@ -145,10 +145,10 @@ static void iton_bt_rx_cb(void *arg) {
         spiStopTransferI(&ITON_BT_SPI_PORT, NULL);
         chSysUnlockFromISR();
 
-        #ifdef ITON_BT_ENABLE_ACK
+#    ifdef ITON_BT_ENABLE_ACK
         // hack to make sure irq is low since acks messes with stuff
         writePinLow(ITON_BT_IRQ_LINE);
-        #endif
+#    endif
 
         switch (iton_bt_buffer[0]) {
             case led_state:
@@ -168,7 +168,6 @@ static void iton_bt_rx_cb(void *arg) {
     }
 }
 #endif
-
 
 void iton_bt_data_cb(SPIDriver *spip) {
     writePinLow(ITON_BT_IRQ_LINE);
@@ -192,7 +191,8 @@ void iton_bt_init(void) {
 }
 
 void iton_bt_send(uint8_t cmd, uint8_t *data, uint8_t len) {
-    while (readPin(ITON_BT_IRQ_LINE));
+    while (readPin(ITON_BT_IRQ_LINE))
+        ;
 
     writePinHigh(ITON_BT_IRQ_LINE);
     iton_bt_buffer[0] = cmd;
@@ -201,7 +201,8 @@ void iton_bt_send(uint8_t cmd, uint8_t *data, uint8_t len) {
 }
 
 void iton_bt_send2(uint8_t cmd, uint8_t b1, uint8_t b2) {
-    while (readPin(ITON_BT_IRQ_LINE));
+    while (readPin(ITON_BT_IRQ_LINE))
+        ;
 
     writePinHigh(ITON_BT_IRQ_LINE);
     iton_bt_buffer[0] = cmd;
@@ -246,7 +247,9 @@ void iton_bt_send_keyboard(report_keyboard_t *report) {
         return iton_bt_send(report_nkro, &nkro_report[0], 15);
     }
 
-    iton_bt_send(report_hid, &report->raw[HID_REPORT_OFFSET], 8);
+    uint8_t raw[8] = {report->mods, report->reserved, report->keys[0], report->keys[1], report->keys[2], report->keys[3], report->keys[4], report->keys[5]};
+
+    iton_bt_send(report_hid, &raw[0], 8);
 }
 
 // pin 0-3 = 26-29

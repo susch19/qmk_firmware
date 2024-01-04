@@ -16,7 +16,7 @@ extern uint8_t inputLanguage;
 
 enum layer_names { _BASE = 0, _FL, _D1, _EN, _MYCKC };
 enum my_keycodes {
-    MYCALC = SAFE_RANGE,
+   MYCALC = QK_USER,
     KC_BTNM,
     KC_STARONHOLD,
     CLEAR_MODS,
@@ -31,6 +31,11 @@ enum my_keycodes {
     MODE_PC_DRIVEN,
     DEC_AUTO_SHIFT,
     INC_AUTO_SHIFT,
+    BT_PROFILE1,
+    BT_PROFILE2,
+    BT_PROFILE3,
+    BT_PAIR,
+    BT_TOGGLE,
     KC_EASYSHIFT = 0x5FFE,
     TD_EASYSHIFT = 0x5FFF,
     MYCKC_ESC    = 0x6000,  // 6000 - 5DA6 => 602 Keys before

@@ -160,6 +160,7 @@ extern "C" {
  * desc |Lcontrol|Lshift  |Lalt    |Lgui    |Rcontrol|Rshift  |Ralt    |Rgui
  *
  */
+
 typedef struct {
 #ifdef KEYBOARD_SHARED_EP
     uint8_t report_id;

@@ -920,11 +920,13 @@ ifeq ($(strip $(BLUETOOTH_ENABLE)), yes)
 
 	ifeq ($(strip $(BLUETOOTH_DRIVER)), ItonBT)
         OPT_DEFS += -DBLUETOOTH_ITON_BT
+        SRC += $(DRIVER_PATH)/bluetooth/bluetooth.c
         SRC += $(DRIVER_PATH)/bluetooth/iton_bt.c
     endif
 
 	ifeq ($(strip $(BLUETOOTH_DRIVER)), ItonBTLowMem)
         OPT_DEFS += -DBLUETOOTH_ITON_BT_LOWMEM
+        SRC += $(DRIVER_PATH)/bluetooth/bluetooth.c
         SRC += $(DRIVER_PATH)/bluetooth/iton_bt_lowmem.c
     endif
 endif

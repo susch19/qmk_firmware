@@ -32,6 +32,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #ifdef ON_KEYBOARD_CALCULATOR_ENABLE
 #    include "calc.c"
 #endif
+#ifdef BLUETOOTH_ENABLE
+#    include "iton_bt.h"
+#    include "outputselect.h"
+#endif
 // #ifdef OPENRGB_ENABLE
 // #    include "openrgb.h"
 // #endif
@@ -50,6 +54,12 @@ uint32_t lastLightLevel   = 0;
 uint8_t  tempVariable     = 0;
 uint16_t autoshiftTimeout = AUTO_SHIFT_TIMEOUT;
 
+uint8_t bitFlagIndicator = 0;
+
+
+#define BT_PRO1 BT_PROFILE1
+#define BT_PRO2 BT_PROFILE2
+#define BT_PRO3 BT_PROFILE3
 // const key_override_t space_key_override = ko_make_with_layers_and_negmods(MOD_MASK_SHIFT, KC_SPACE, KC_BACKSPACE, ~0, MOD_MASK_CAG);
 // const key_override_t delete_key_override = ko_make_basic(MOD_MASK_SHIFT, KC_DELETE, KC_INSERT);
 
@@ -86,7 +96,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
     /*  Row:        0          1          2          3        4        5        6         7         8        9          10        11           12          13        14        15       16         17        18     */
     [_FL] = {{QK_BOOT, KC_SLCT, KC_PAUS, KC_APP, _______, RGB_VAD, RGB_VAI, KC_MPRV, KC_MPLY, KC_MNXT, KC_MUTE, KC_VOLD, KC_VOLU, KC_INS, KC_PSCR, _______, _______, _______, RGB_MOD},
-             {MODE_PC_DRIVEN, DEC_AUTO_SHIFT, INC_AUTO_SHIFT, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, KC_NO, _______, _______, RGB_MODE_RAINBOW, RGB_HUI},
+             {MODE_PC_DRIVEN, DEC_AUTO_SHIFT, INC_AUTO_SHIFT, _______, _______, BT_PAIR, BT_PRO1, BT_PRO2, BT_PRO3, _______, _______, _______, _______, _______, KC_NO, _______, _______, RGB_MODE_RAINBOW, RGB_HUI},
              {CLEAR_MODS, _______, _______, _______, MYOPENRGB, MYCALC, _______, _______, _______, MYOPENRGB, KC_PSCR, _______, _______, _______, KC_NO, RGB_MODE_XMAS, RGB_MODE_GRADIENT, RGB_MODE_RGBTEST, _______},
              {KC_CAPS, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, KC_NO, RGB_MODE_SWIRL, RGB_MODE_SNAKE, RGB_MODE_KNIGHT, KC_NO},
              {KC_LSFT, _______, _______, _______, KC_CALC, MYVIA, _______, _______, MG_NKRO, _______, _______, KC_APP, KC_NO, KC_RSFT, RGB_SPI, RGB_MODE_PLAIN, RGB_MODE_BREATHE, RGB_MODE_RAINBOW, RGB_SAI},
@@ -188,7 +198,7 @@ rgb_header getRGBHeader(uint8_t *data) {
     header.mode           = (headerData >> 14) & 0b11;
     header.count          = (headerData >> 9) & 0b11111;
     header.rgb            = (headerData >> 7) & 0b11;
-    header.index          = (headerData) & 0b1111111;
+    header.index          = (headerData)&0b1111111;
 
     return header;
 }
@@ -198,7 +208,7 @@ command_header getCommandHeader(uint8_t *data) {
     uint16_t       headerData = ((uint16_t)data[0] << 8) | data[1];
     header.mode               = (headerData >> 14) & 0b11;
     header.categorie          = (headerData >> 6) & 0xff;
-    header.reserved           = (headerData) & 0b111111;
+    header.reserved           = (headerData)&0b111111;
 
     return header;
 }
@@ -218,6 +228,11 @@ layer_state_t layer_state_set_user(layer_state_t state) {
     return state;
 }
 
+void iton_bt_connection_successful() {
+
+    bitFlagIndicator &= 0xfe;
+    set_output(OUTPUT_BLUETOOTH);
+}
 bool rgb_matrix_indicators_user() {
     bool custom = false;
     if (via_mode) {
@@ -243,6 +258,16 @@ bool rgb_matrix_indicators_user() {
         if (layerMask & 0b1000) rgb_matrix_set_color(23, 255, 0, 255); // 4
         custom = true;
     }
+
+    if (bitFlagIndicator > 0) {
+        if (bitFlagIndicator & 0b1) rgb_matrix_set_color(24, 255, 0, 255);
+        if (bitFlagIndicator & 0b10) rgb_matrix_set_color(25, 255, 0, 255);
+        if (bitFlagIndicator & 0b100) rgb_matrix_set_color(26, 255, 0, 255);
+        if (bitFlagIndicator & 0b1000) rgb_matrix_set_color(27, 255, 0, 255);
+        if (bitFlagIndicator & 0b10000) rgb_matrix_set_color(28, 255, 0, 255);
+        custom = true;
+    }
+
     if (tempVariable > 0) {
         rgb_matrix_set_color(tempVariable, 0, 255, 255);
         custom = true;
@@ -408,15 +433,32 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             rgb_matrix_mode_noeeprom(RGB_MATRIX_CUSTOM_PC_DRIVEN);
             rgb_matrix_set_color_all(0, 0, 0);
         }
-        if(keycode == DEC_AUTO_SHIFT){
+        if (keycode == DEC_AUTO_SHIFT) {
             autoshiftTimeout -= 5;
             send_word(autoshiftTimeout);
         }
-        if(keycode == INC_AUTO_SHIFT){
+        if (keycode == INC_AUTO_SHIFT) {
             autoshiftTimeout += 5;
             send_word(autoshiftTimeout);
         }
-
+#ifdef BLUETOOTH_ENABLE
+        if (keycode == BT_PROFILE1) {
+            bitFlagIndicator ^= 2;
+            iton_bt_switch_profile(0);
+        }
+        if (keycode == BT_PROFILE2) {
+            bitFlagIndicator ^= 4;
+            iton_bt_switch_profile(1);
+        }
+        if (keycode == BT_PROFILE3) {
+            bitFlagIndicator ^= 8;
+            iton_bt_switch_profile(2);
+        }
+        if (keycode == BT_PAIR) {
+            bitFlagIndicator ^= 1;
+            iton_bt_enter_pairing();
+        }
+#endif
     }
 
     // if(keycode >= (0x5700 | BETTERNUM) && keycode <= (0x5700 | STARONHOLD))
