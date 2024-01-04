@@ -34,6 +34,10 @@
 #include "debug.h"
 #include "print.h"
 
+#ifdef BLUETOOTH_ITON_BT
+#    include "iton_bt.h"
+#endif
+
 #ifndef EARLY_INIT_PERFORM_BOOTLOADER_JUMP
 // Change this to be TRUE once we've migrated keyboards to the new init system
 // Remember to change docs/platformdev_chibios_earlyinit.md as well.
@@ -147,6 +151,10 @@ void protocol_pre_init(void) {
     /* Init USB */
     usb_event_queue_init();
     init_usb_driver(&USB_DRIVER);
+
+#ifdef BLUETOOTH_ITON_BT
+    iton_bt_init();
+#endif
 
 #ifdef MIDI_ENABLE
     setup_midi();

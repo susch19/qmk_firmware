@@ -19,6 +19,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #    include "bluefruit_le.h"
 #endif
 
+#ifdef BLUETOOTH_ITON_BT
+#    include "iton_bt.h"
+#endif
+
 uint8_t desired_output = OUTPUT_DEFAULT;
 
 /** \brief Set Output
