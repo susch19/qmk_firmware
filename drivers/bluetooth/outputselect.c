@@ -19,6 +19,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #    include "bluefruit_le.h"
 #endif
 
+#ifdef BLUETOOTH_ITON_BT
+#    include "iton_bt.h"
+#endif
+
+#ifdef BLUETOOTH_ITON_BT_LOWMEM
+#    include "iton_bt_lowmem.h"
+#endif
+
 uint8_t desired_output = OUTPUT_DEFAULT;
 
 /** \brief Set Output
@@ -47,6 +55,12 @@ uint8_t auto_detect_output(void) {
 
 #ifdef BLUETOOTH_BLUEFRUIT_LE
     if (bluefruit_le_is_connected()) {
+        return OUTPUT_BLUETOOTH;
+    }
+#endif
+
+#if BLUETOOTH_ITON_BT || BLUETOOTH_ITON_BT_LOWMEM
+    if (iton_bt_is_connected) {
         return OUTPUT_BLUETOOTH;
     }
 #endif

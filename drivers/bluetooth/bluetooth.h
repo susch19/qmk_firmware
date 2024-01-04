@@ -50,3 +50,15 @@ void bluetooth_send_mouse(report_mouse_t *report);
  * \param usage The consumer usage to send.
  */
 void bluetooth_send_consumer(uint16_t usage);
+
+/**
+ * \brief Send a consumer usage.
+ *
+ * \param usage The consumer usage to send.
+ */
+void bluetooth_send_system(uint16_t usage);
+
+/**
+ * \brief TODO: Document this function.
+ */
+uint8_t bluetooth_led_state(void);

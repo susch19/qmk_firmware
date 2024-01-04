@@ -51,6 +51,10 @@
 extern keymap_config_t keymap_config;
 #endif
 
+#ifdef BLUETOOTH_ENABLE
+#    include "outputselect.h"
+#endif
+
 /* ---------------------------------------------------------
  *       Global interface variables and declarations
  * ---------------------------------------------------------
@@ -822,9 +826,7 @@ static void keyboard_idle_timer_cb(struct ch_virtual_timer *timer, void *arg) {
 }
 
 /* LED status */
-uint8_t keyboard_leds(void) {
-    return keyboard_led_state;
-}
+uint8_t keyboard_leds(void) { return keyboard_led_state; }
 
 void send_report(uint8_t endpoint, void *report, size_t size) {
     osalSysLock();
