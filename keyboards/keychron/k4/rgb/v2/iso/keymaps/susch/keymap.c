@@ -38,13 +38,17 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 extern bool      last_suspend_state;
 extern uint32_t *instscval;
-bool is_suspended = false;
-bool via_mode     = false;
-bool openrgb_mode = true;
+bool             is_suspended     = false;
+bool             via_mode         = false;
+bool             openrgb_mode     = false;
+uint8_t          inputLanguage    = 0;
+uint8_t          receivedPackages = 0;
+uint8_t          layerMask        = 0;
 // long long _Accum  something      = 0.0k;
 
-uint32_t    lastLightLevel = 0;
-
+uint32_t lastLightLevel   = 0;
+uint8_t  tempVariable     = 0;
+uint16_t autoshiftTimeout = AUTO_SHIFT_TIMEOUT;
 
 // const key_override_t space_key_override = ko_make_with_layers_and_negmods(MOD_MASK_SHIFT, KC_SPACE, KC_BACKSPACE, ~0, MOD_MASK_CAG);
 // const key_override_t delete_key_override = ko_make_basic(MOD_MASK_SHIFT, KC_DELETE, KC_INSERT);
@@ -60,7 +64,6 @@ uint32_t    lastLightLevel = 0;
 // #pragma endregion TapDance
 
 #define MG_NKRO MAGIC_TOGGLE_NKRO
-
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
@@ -79,27 +82,24 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
                     +--------------------------------------------------------------------------+-------------------+
     */
     /*  Row:        0          1          2          3        4        5        6         7        8        9          10         11         12         13         14         15         16         17         18     */
-    [_BASE] = {{KC_ESC, KC_F1, KC_F2, KC_F3, KC_F4, KC_F5, KC_F6, KC_F7, KC_F8, KC_F9, KC_F10, KC_F11, KC_F12, KC_DEL, KC_HOME, KC_END, KC_PGUP, KC_PGDN, MO(_D1)},
-               {KC_GRV, KC_1, KC_2, KC_3, KC_4, KC_5, KC_6, KC_7, KC_8, KC_9, KC_0, KC_MINS, KC_EQL, KC_BSPC, KC_NO, KC_NUM_LOCK, KC_PSLS, KC_PAST, KC_PMNS},
-               {KC_TAB, KC_Q, KC_W, KC_E, KC_R, KC_T, KC_Y, KC_U, KC_I, KC_O, KC_P, KC_LBRC, KC_RBRC /*KC_STARONHOLD TD(STARONHOLD)*/, KC_NO, KC_NO, KC_P7, KC_P8, KC_P9, KC_PPLS},
-               {KC_EASYSHIFT, KC_A, KC_S, KC_D, KC_F, KC_G, KC_H, KC_J, KC_K, KC_L, KC_SCLN, KC_QUOT, KC_NUHS, KC_ENT, KC_NO, KC_P4, KC_P5, KC_P6, KC_NO},
-               {SC_LSPO, KC_NUBS, KC_Z, KC_X, KC_C, KC_V, KC_B, KC_N, KC_M, KC_COMM, KC_DOT, KC_SLSH, KC_NO, SC_RSPC, KC_UP, KC_P1, KC_P2, KC_P3, KC_PENT},
-               {SC_LCPO, KC_LGUI, SC_LAPO, KC_NO, KC_NO, KC_NO, KC_SPC, KC_NO, KC_NO, KC_NO, SC_RAPC, MO(_FL), SC_RCPC, KC_LEFT, KC_DOWN, KC_RGHT, KC_P0, KC_BTNM, KC_NO}},
+    [_BASE] = {{KC_ESC, KC_F1, KC_F2, KC_F3, KC_F4, KC_F5, KC_F6, KC_F7, KC_F8, KC_F9, KC_F10, KC_F11, KC_F12, KC_DEL, KC_HOME, KC_END, KC_PGUP, KC_PGDN, MO(_D1)}, {KC_GRV, KC_1, KC_2, KC_3, KC_4, KC_5, KC_6, KC_7, KC_8, KC_9, KC_0, KC_MINS, KC_EQL, KC_BSPC, KC_NO, KC_NUM_LOCK, KC_PSLS, KC_PAST, KC_PMNS}, {KC_TAB, KC_Q, KC_W, KC_E, KC_R, KC_T, KC_Y, KC_U, KC_I, KC_O, KC_P, KC_LBRC, KC_RBRC /*KC_STARONHOLD TD(STARONHOLD)*/, KC_NO, KC_NO, KC_P7, KC_P8, KC_P9, KC_PPLS}, {KC_EASYSHIFT, KC_A, KC_S, KC_D, KC_F, KC_G, KC_H, KC_J, KC_K, KC_L, KC_SCLN, KC_QUOT, KC_NUHS, KC_ENT, KC_NO, KC_P4, KC_P5, KC_P6, KC_NO}, {SC_LSPO, KC_NUBS, KC_Z, KC_X, KC_C, KC_V, KC_B, KC_N, KC_M, KC_COMM, KC_DOT, KC_SLSH, KC_NO, SC_RSPC, KC_UP, KC_P1, KC_P2, KC_P3, KC_PENT}, {SC_LCPO, KC_LGUI, SC_LAPO, KC_NO, KC_NO, KC_NO, KC_SPC, KC_NO, KC_NO, KC_NO, SC_RAPC, MO(_FL), SC_RCPC, KC_LEFT, KC_DOWN, KC_RGHT, KC_P0, KC_BTNM, KC_NO}},
 
     /*  Row:        0          1          2          3        4        5        6         7         8        9          10        11           12          13        14        15       16         17        18     */
     [_FL] = {{QK_BOOT, KC_SLCT, KC_PAUS, KC_APP, _______, RGB_VAD, RGB_VAI, KC_MPRV, KC_MPLY, KC_MNXT, KC_MUTE, KC_VOLD, KC_VOLU, KC_INS, KC_PSCR, _______, _______, _______, RGB_MOD},
-             {_______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, KC_NO, _______, _______, RGB_MODE_RAINBOW, RGB_HUI},
-             {CLEAR_MODS, _______, _______, _______, MYOPENRGB, MYCALC, _______, _______, _______, _______, KC_PSCR, _______, _______, _______, KC_NO, RGB_MODE_XMAS, RGB_MODE_GRADIENT, RGB_MODE_RGBTEST, _______},
+             {MODE_PC_DRIVEN, DEC_AUTO_SHIFT, INC_AUTO_SHIFT, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, KC_NO, _______, _______, RGB_MODE_RAINBOW, RGB_HUI},
+             {CLEAR_MODS, _______, _______, _______, MYOPENRGB, MYCALC, _______, _______, _______, MYOPENRGB, KC_PSCR, _______, _______, _______, KC_NO, RGB_MODE_XMAS, RGB_MODE_GRADIENT, RGB_MODE_RGBTEST, _______},
              {KC_CAPS, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, KC_NO, RGB_MODE_SWIRL, RGB_MODE_SNAKE, RGB_MODE_KNIGHT, KC_NO},
              {KC_LSFT, _______, _______, _______, KC_CALC, MYVIA, _______, _______, MG_NKRO, _______, _______, KC_APP, KC_NO, KC_RSFT, RGB_SPI, RGB_MODE_PLAIN, RGB_MODE_BREATHE, RGB_MODE_RAINBOW, RGB_SAI},
              {_______, KC_LALT, KC_LGUI, KC_NO, KC_NO, KC_NO, _______, KC_NO, KC_NO, KC_NO, RCS(KC_M), MO(_FL), RCS(KC_U), _______, RGB_SPD, _______, RGB_MODE_TWINKLE, _______, KC_NO}},
 
     [_D1] = {{KC_SLEP, KC_F13, KC_F14, KC_F15, KC_F16, KC_F17, KC_F18, KC_F19, KC_F20, KC_F21, KC_F22, KC_F23, KC_F24, KC_INS, KC_PSCR, _______, _______, RGB_MOD, MO(_D1)},
-             {_______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, KC_NO, _______, _______, RGB_MODE_RAINBOW, RGB_HUI},
+             {MODE_PC_DRIVEN, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, KC_NO, _______, _______, RGB_MODE_RAINBOW, RGB_HUI},
              {CLEAR_MODS, _______, _______, _______, MYOPENRGB, MYCALC, _______, _______, _______, _______, KC_PSCR, _______, _______, _______, KC_NO, RGB_MODE_XMAS, RGB_MODE_GRADIENT, RGB_MODE_RGBTEST, _______},
              {KC_CAPS, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, RGB_TOG, KC_NO, RGB_MODE_SWIRL, RGB_MODE_SNAKE, RGB_MODE_KNIGHT, KC_NO},
              {KC_LSFT, _______, _______, _______, _______, MYVIA, _______, _______, MG_NKRO, _______, _______, KC_APP, KC_NO, KC_RSFT, RGB_SPI, RGB_MODE_PLAIN, RGB_MODE_BREATHE, RGB_MODE_RAINBOW, RGB_SAI},
              {_______, KC_LALT, KC_LGUI, KC_NO, KC_NO, KC_NO, _______, KC_NO, KC_NO, KC_NO, RCS(KC_M), MO(_FL), RCS(KC_U), _______, RGB_SPD, _______, RGB_MODE_TWINKLE, _______, KC_NO}},
+
+    [_EN] = {{KC_ESC, KC_F1, KC_F2, KC_F3, KC_F4, KC_F5, KC_F6, KC_F7, KC_F8, KC_F9, KC_F10, KC_F11, KC_F12, KC_DEL, KC_HOME, KC_END, KC_PGUP, KC_PGDN, MO(_D1)}, {KC_GRV, KC_2, KC_1, KC_3, KC_4, KC_5, KC_6, KC_7, KC_8, KC_9, KC_0, KC_MINS, KC_EQL, KC_BSPC, KC_NO, KC_NUM_LOCK, KC_PSLS, KC_PAST, KC_PMNS}, {KC_TAB, KC_Q, KC_W, KC_E, KC_R, KC_T, KC_Z, KC_U, KC_I, KC_O, KC_P, KC_LBRC, KC_RBRC /*KC_STARONHOLD TD(STARONHOLD)*/, KC_NO, KC_NO, KC_P7, KC_P8, KC_P9, KC_PPLS}, {KC_EASYSHIFT, KC_A, KC_S, KC_D, KC_F, KC_G, KC_H, KC_J, KC_K, KC_L, KC_SCLN, KC_QUOT, KC_NUHS, KC_ENT, KC_NO, KC_P4, KC_P5, KC_P6, KC_NO}, {SC_LSPO, KC_NUBS, KC_Y, KC_X, KC_C, KC_V, KC_B, KC_N, KC_M, KC_COMM, KC_DOT, KC_SLSH, KC_NO, SC_RSPC, KC_UP, KC_P1, KC_P2, KC_P3, KC_PENT}, {SC_LCPO, KC_LGUI, SC_LAPO, KC_NO, KC_NO, KC_NO, KC_SPC, KC_NO, KC_NO, KC_NO, SC_RAPC, MO(_FL), SC_RCPC, KC_LEFT, KC_DOWN, KC_RGHT, KC_P0, KC_BTNM, KC_NO}},
 
     [_MYCKC] = {{MYCKC_ESC, MYCKC_F1, MYCKC_F2, MYCKC_F3, MYCKC_F4, MYCKC_F5, MYCKC_F6, MYCKC_F7, MYCKC_F8, MYCKC_F9, MYCKC_F10, MYCKC_F11, MYCKC_F12, MYCKC_DEL, MYCKC_HOME, MYCKC_END, MYCKC_PGUP, MYCKC_PGDN, MYCKC_RGB},
                 {MYCKC_GRV, MYCKC_1, MYCKC_2, MYCKC_3, MYCKC_4, MYCKC_5, MYCKC_6, MYCKC_7, MYCKC_8, MYCKC_9, MYCKC_0, MYCKC_MINS, MYCKC_EQL, MYCKC_BSPC, KC_NO, MYCKC_NLCK, MYCKC_PSLS, MYCKC_PAST, MYCKC_PMNS},
@@ -113,7 +113,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 bool dip_switch_update_user(uint8_t index, bool active) {
     switch (index) {
         case 0:
-            if (active) {  // BT mode
+            if (active) { // BT mode
                 // something += 1.1k;
                 // if (something > 10.0k) something += 2.1k;
                 // if (something > 100.0k) something *= 1.1k;d
@@ -124,15 +124,15 @@ bool dip_switch_update_user(uint8_t index, bool active) {
                 //     tap_code((uint8_t)(something));
                 // }
                 // do stuff
-            } else {  // Cable mode
+            } else { // Cable mode
                 // do stuff
             }
             break;
         case 1:
-            if (active) {  // Mac/iOS mode
-                layer_on(2);
-            } else {  // Win/Android mode
-                layer_clear();
+            if (active) { // Mac/iOS mode
+                layer_on(_MYCKC);
+            } else { // Win/Android mode
+                layer_off(_MYCKC);
             }
             break;
     }
@@ -188,7 +188,7 @@ rgb_header getRGBHeader(uint8_t *data) {
     header.mode           = (headerData >> 14) & 0b11;
     header.count          = (headerData >> 9) & 0b11111;
     header.rgb            = (headerData >> 7) & 0b11;
-    header.index          = (headerData)&0b1111111;
+    header.index          = (headerData) & 0b1111111;
 
     return header;
 }
@@ -198,48 +198,61 @@ command_header getCommandHeader(uint8_t *data) {
     uint16_t       headerData = ((uint16_t)data[0] << 8) | data[1];
     header.mode               = (headerData >> 14) & 0b11;
     header.categorie          = (headerData >> 6) & 0xff;
-    header.reserved           = (headerData)&0b111111;
+    header.reserved           = (headerData) & 0b111111;
 
     return header;
 }
 
-__attribute__((weak)) void raw_hid_receive_via(uint8_t *data, uint8_t length) { return; }
-__attribute__((weak)) void raw_hid_receive_openrgb(uint8_t *data, uint8_t length) { return; }
-
-bool rgb_matrix_indicators_user(){
-    if(via_mode){
-        rgb_matrix_set_color(45, 255,255,0);
-        rgb_matrix_set_color(55, 255,255,0);
-        rgb_matrix_set_color(76, 255,255,0);
-        return true;
-    }
-    return false;
+__attribute__((weak)) void raw_hid_receive_via(uint8_t *data, uint8_t length) {
+    return;
+}
+__attribute__((weak)) void raw_hid_receive_openrgb(uint8_t *data, uint8_t length) {
+    return;
 }
 
-#ifdef RAW_ENABLE
-void raw_hid_receive(uint8_t *data, uint8_t length) {
-    // raw_hid_send(data, length);
-    // Modify data and lenght
-    // return;
-    // raw_hid_send(data, length);
-    // return;
-    // uint8_t dataLength = length - 1;
+layer_state_t layer_state_set_user(layer_state_t state) {
+    layerMask = IS_LAYER_ON_STATE(state, 1);
+    layerMask |= IS_LAYER_ON_STATE(state, 2) << 1;
+    layerMask |= IS_LAYER_ON_STATE(state, 3) << 2;
+    layerMask |= IS_LAYER_ON_STATE(state, 4) << 3;
+    return state;
+}
 
-#    if VIA_ENABLE
+bool rgb_matrix_indicators_user() {
+    bool custom = false;
     if (via_mode) {
-        raw_hid_receive_via(data, length);
-        return;
+        rgb_matrix_set_color(45, 255, 255, 0);
+        rgb_matrix_set_color(55, 255, 255, 0);
+        rgb_matrix_set_color(76, 255, 255, 0);
+        custom = true;
     }
-#    endif
-#    if OPENRGB_ENABLE
-    if (openrgb_mode) {
-        raw_hid_receive_openrgb(data, length);
-        return;
+    if (inputLanguage > 0) {
+        rgb_matrix_set_color(40, 255, 0, 255); // E
+        rgb_matrix_set_color(78, 255, 0, 255); // N
+        rgb_matrix_set_color(59, 255, 0, 255); // G
+        rgb_matrix_set_color(63, 255, 0, 255); // L
+        rgb_matrix_set_color(45, 255, 0, 255); // I
+        rgb_matrix_set_color(56, 255, 0, 255); // S
+        rgb_matrix_set_color(60, 255, 0, 255); // H
+        custom = true;
     }
-#    endif
+    if (layerMask > 0) {
+        if (layerMask & 0b1) rgb_matrix_set_color(20, 255, 0, 255);    // 1
+        if (layerMask & 0b10) rgb_matrix_set_color(21, 255, 0, 255);   // 2
+        if (layerMask & 0b100) rgb_matrix_set_color(22, 255, 0, 255);  // 3
+        if (layerMask & 0b1000) rgb_matrix_set_color(23, 255, 0, 255); // 4
+        custom = true;
+    }
+    if (tempVariable > 0) {
+        rgb_matrix_set_color(tempVariable, 0, 255, 255);
+        custom = true;
+    }
 
+    return custom;
+}
+
+int process_raw_message(uint8_t *data, uint8_t length) {
     command_header header = getCommandHeader(data);
-    int            diff   = 0;
     switch (header.mode) {
         case RGB_COMMAND: {
             rgb_header rgbheader = getRGBHeader(data);
@@ -248,17 +261,17 @@ void raw_hid_receive(uint8_t *data, uint8_t length) {
             } else
                 switch (rgbheader.rgb) {
                     case IndexItereationRGBZero:
-                    case Reserved: {  // Special case, only first byte is used for header, because index gets stripped, so data starts at index 1!
-                        diff = setColorsFor(&data[1], rgbheader.count, 0);
+                    case Reserved: { // Special case, only first byte is used for header, because index gets stripped, so data starts at index 1!
+                        return setColorsFor(&data[1], rgbheader.count, 0);
                         break;
                     }
                     case PerKeyRGB:
                         for (size_t i = 0; i < rgbheader.count; i++) {
-                            rgb_matrix_set_color(data[i * 4 + 2], data[i * 4 + 3], data[i * 4 + 4], data[i * 4 + 5]);  // First 2 bytes always used
+                            rgb_matrix_set_color(data[i * 4 + 2], data[i * 4 + 3], data[i * 4 + 4], data[i * 4 + 5]); // First 2 bytes always used
                         }
                         break;
                     case IndexItereationRGB: {
-                        diff = setColorsFor(&data[2], rgbheader.count, rgbheader.index);
+                        return setColorsFor(&data[2], rgbheader.count, rgbheader.index);
                         break;
                     }
                 }
@@ -270,8 +283,11 @@ void raw_hid_receive(uint8_t *data, uint8_t length) {
                     layer_invert(data[2]);
                     break;
                 case ResetLayer:
-                    layer_clear();
-                    layer_on(data[2]);
+                    layer_move(data[2]);
+                    tempVariable = data[2];
+                    break;
+                case ChangeLanguage:
+                    inputLanguage = data[2];
                     break;
             }
 
@@ -293,10 +309,18 @@ void raw_hid_receive(uint8_t *data, uint8_t length) {
         // }
         case OTHER_COMMAND: {
             switch (header.categorie) {
-                case ResetKeyboard:
+                case MULTI:
+                    uint8_t index = 2;
+                    for (;;) {
+                        uint8_t newLen = data[index++];
+                        if (newLen == 0) break;
+                        process_raw_message(&data[index++], newLen);
+                    }
+                    break;
+                case RESET_KEYBOARD:
                     reset_keyboard();
                     break;
-                case GoIntoBootloader:
+                case GO_INTO_BOOTLOADER:
                     bootloader_jump();
                     break;
                 default:
@@ -304,6 +328,33 @@ void raw_hid_receive(uint8_t *data, uint8_t length) {
             }
         } break;
     }
+    return 0;
+}
+#ifdef RAW_ENABLE
+void raw_hid_receive(uint8_t *data, uint8_t length) {
+    receivedPackages++;
+    // raw_hid_send(data, length);
+    // Modify data and lenght
+    // return;
+    // raw_hid_send(data, length);
+    // return;
+    // uint8_t dataLength = length - 1;
+
+#    if VIA_ENABLE
+    if (via_mode) {
+        raw_hid_receive_via(data, length);
+        return;
+    }
+#    endif
+#    if OPENRGB_ENABLE
+    if (openrgb_mode) {
+        raw_hid_receive_openrgb(data, length);
+        return;
+    }
+#    endif
+
+    int diff = process_raw_message(data, length);
+
     if (diff != 0) {
         char buffer[8];
         memset(buffer, 0, 8);
@@ -326,10 +377,6 @@ void raw_hid_receive(uint8_t *data, uint8_t length) {
         raw_hid_send(data, length);
 #    endif
     }
-    // #ifndef VIA_ENABLE
-    // else
-    //     raw_hid_send(data, length);
-    // #endif
 }
 #endif
 
@@ -350,11 +397,26 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
         register_mods(0xFF);
         unregister_mods(0xFF);
     }
-    if (keycode == MYVIA && record->event.pressed) {
-        via_mode = !via_mode;
-    }
-    if (keycode == MYOPENRGB && record->event.pressed) {
-        openrgb_mode = !openrgb_mode;
+    if (record->event.pressed) {
+        if (keycode == MYVIA) {
+            via_mode = !via_mode;
+        }
+        if (keycode == MYOPENRGB) {
+            openrgb_mode = !openrgb_mode;
+        }
+        if (keycode == MODE_PC_DRIVEN) {
+            rgb_matrix_mode_noeeprom(RGB_MATRIX_CUSTOM_PC_DRIVEN);
+            rgb_matrix_set_color_all(0, 0, 0);
+        }
+        if(keycode == DEC_AUTO_SHIFT){
+            autoshiftTimeout -= 5;
+            send_word(autoshiftTimeout);
+        }
+        if(keycode == INC_AUTO_SHIFT){
+            autoshiftTimeout += 5;
+            send_word(autoshiftTimeout);
+        }
+
     }
 
     // if(keycode >= (0x5700 | BETTERNUM) && keycode <= (0x5700 | STARONHOLD))
@@ -415,11 +477,15 @@ bool led_update_user(led_t led_state) {
 void suspend_power_down_user(void) {
     rgb_matrix_set_suspend_state(true);
 
-    rgb_matrix_set_color_all(0, 0, 0);  // turn off all LEDs when suspending
+    rgb_matrix_set_color_all(0, 0, 0); // turn off all LEDs when suspending
     is_suspended = true;
 }
 
 void suspend_wakeup_init_user(void) {
     rgb_matrix_set_suspend_state(false);
     is_suspended = false;
+}
+
+uint16_t get_autoshift_timeout(uint16_t keycode, keyrecord_t *record) {
+    return autoshiftTimeout;
 }

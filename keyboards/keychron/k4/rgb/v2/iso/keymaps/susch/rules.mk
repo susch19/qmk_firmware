@@ -11,6 +11,7 @@ endif
 SRC += custom_space_cadet.c
 # SRC += calc.c
 
+RAW_ENABLE = yes
 VIA_ENABLE = yes
-
-
+AUTO_SHIFT_ENABLE = yes
+RGB_MATRIX_CUSTOM_USER = yes

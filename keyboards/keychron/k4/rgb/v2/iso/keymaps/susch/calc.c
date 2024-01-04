@@ -19,7 +19,7 @@ typedef long long _Accum myfloat;
 
 typedef struct {
     char    identifier[3];
-    u_int8_t priority;
+    uint8_t priority;
 } Operator;
 
 const Operator operators[] = {

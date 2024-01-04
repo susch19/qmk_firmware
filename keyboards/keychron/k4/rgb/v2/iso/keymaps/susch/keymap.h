@@ -12,8 +12,9 @@
 extern bool is_suspended;
 extern bool via_mode;
 extern bool openrgb_mode;
+extern uint8_t inputLanguage;
 
-enum layer_names { _BASE = 0, _FL, _D1, _MYCKC };
+enum layer_names { _BASE = 0, _FL, _D1, _EN, _MYCKC };
 enum my_keycodes {
     MYCALC = SAFE_RANGE,
     KC_BTNM,
@@ -27,6 +28,9 @@ enum my_keycodes {
     SU_RSPC,
     SU_RCBC,
     SU_RACBC,
+    MODE_PC_DRIVEN,
+    DEC_AUTO_SHIFT,
+    INC_AUTO_SHIFT,
     KC_EASYSHIFT = 0x5FFE,
     TD_EASYSHIFT = 0x5FFF,
     MYCKC_ESC    = 0x6000,  // 6000 - 5DA6 => 602 Keys before

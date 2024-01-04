@@ -17,6 +17,7 @@ enum rgb_modes{
 enum layer_modes{
     SwitchToLayer,
     ResetLayer,
+    ChangeLanguage
 };
 enum macro_modes{
     PCMacro,
@@ -30,6 +31,7 @@ enum other_modes{
 };
 
 enum custom_commands{
-    ResetKeyboard = 254,
-    GoIntoBootloader = 255
+    MULTI = 253,
+    RESET_KEYBOARD = 254,
+    GO_INTO_BOOTLOADER = 255
 };
