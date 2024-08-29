@@ -330,7 +330,7 @@ __attribute__((weak)) void wireless_enter_sleep_kb(void) {}
 
 /*  */
 static void wireless_hid_set_protocol(bool report_protocol) {
-    wireless_report_protocol = false;
+    wireless_report_protocol = report_protocol;
 }
 
 uint8_t wreless_keyboard_leds(void) {

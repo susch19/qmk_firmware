@@ -33,7 +33,7 @@ When no state changes have occured for DEBOUNCE milliseconds, we push the state.
 #endif
 
 #ifndef DEBOUNCE
-#    define DEBOUNCE 5
+#    define DEBOUNCE 50
 #endif
 
 // Maximum debounce: 127ms
