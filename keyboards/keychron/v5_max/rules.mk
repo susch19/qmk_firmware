@@ -1,3 +1,7 @@
+SNAP_CLICK_ENABLE=yes
+DYNAMIC_DEBOUNCE_ENABLE = yes
+INFO_CHAGNED_NOTIFY_ENABLE = yes
+
 KEYCHRON_RGB_ENABLE = yes
 
 include keyboards/keychron/common/wireless/wireless.mk

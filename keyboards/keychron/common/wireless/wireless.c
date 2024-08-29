@@ -377,7 +377,7 @@ __attribute__((weak)) void wireless_enter_sleep_kb(void) {}
 
 /*  */
 static void wireless_hid_set_protocol(bool report_protocol) {
-    wireless_report_protocol = false;
+    wireless_report_protocol = report_protocol;
 }
 
 uint8_t wreless_keyboard_leds(void) {
@@ -554,7 +554,7 @@ void wireless_event_task(void) {
 #if defined(RAW_ENABLE) && defined(WILRESS_RAW_ENABLE)
             case EVT_RAW_HID:
 #    ifdef VIA_ENABLE
-                via_raw_hid_receive(RAW_HID_SRC_WIRELESS, event.params.raw_hid_data, 32);
+                raw_hid_receive(RAW_HID_SRC_WIRELESS, event.params.raw_hid_data, 32);
 #    else
                 kc_raw_hid_rx(RAW_HID_SRC_WIRELESS, event.params.raw_hid_data, 32);
 #    endif

@@ -68,6 +68,9 @@
 
 /* Don’t clear 2.4G pairing info on factory reset. */
 #    define P2P4G_CELAR_MASK 0
+
+/* Enable wireless raw hid capability */
+#    define WILRESS_RAW_ENABLE 1
 #endif
 
 /* Factory test keys */

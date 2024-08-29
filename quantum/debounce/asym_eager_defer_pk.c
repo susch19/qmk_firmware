@@ -34,7 +34,7 @@ releasing a key, that state is pushed after no changes occur for DEBOUNCE millis
 #endif
 
 #ifndef DEBOUNCE
-#    define DEBOUNCE 5
+#    define DEBOUNCE 50
 #endif
 
 // Maximum debounce: 127ms

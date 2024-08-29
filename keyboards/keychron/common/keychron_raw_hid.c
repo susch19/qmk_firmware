@@ -114,18 +114,19 @@ void get_firmware_version(uint8_t *data) {
 }
 
 void kc_raw_hid_send(uint8_t src, uint8_t *data, uint8_t len) {
+#    ifdef LK_WIRELESS_ENABLE
+    if (wireless_get_state() == WT_CONNECTED) {
+        extern wt_func_t wireless_transport;
+        if (wireless_transport.send_raw_hid) {
+            wireless_transport.send_raw_hid(data, len);
+            return;
+        }
+    }
+#    endif
     if (src == RAW_HID_SRC_USB) {
         extern host_driver_t chibios_driver;
         chibios_driver.send_raw_hid(data, len);
     }
-#    ifdef LK_WIRELESS_ENABLE
-    else if (wireless_get_state() == WT_CONNECTED) {
-        extern wt_func_t wireless_transport;
-        if (wireless_transport.send_raw_hid) {
-            wireless_transport.send_raw_hid(data, len);
-        }
-    }
-#    endif
 }
 
 bool kc_raw_hid_rx(uint8_t src, uint8_t *data, uint8_t length) {
@@ -135,6 +136,8 @@ bool kc_raw_hid_rx(uint8_t src, uint8_t *data, uint8_t length) {
         return true;
     }
 #    endif
+
+if (kc_raw_hid_rx_user(src, data, length)) return true;
 
     switch (data[0]) {
 #    ifdef VIA_ENABLE
@@ -265,9 +268,12 @@ bool kc_raw_hid_rx(uint8_t src, uint8_t *data, uint8_t length) {
         default:
             return false;
     }
-
     kc_raw_hid_send(src, data, length);
     return true;
+}
+
+__attribute__((weak)) bool kc_raw_hid_rx_user(uint8_t src, uint8_t *data, uint8_t length) {
+    return false;
 }
 
 #    if defined(VIA_ENABLE)
