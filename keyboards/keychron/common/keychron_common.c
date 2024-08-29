@@ -146,9 +146,13 @@ void get_support_feature(uint8_t *data) {
         ;
 }
 
+__attribute__((weak)) bool via_command_user(uint8_t *data, uint8_t length) {
+    return false;
+}
+
 bool via_command_kb(uint8_t *data, uint8_t length) {
-    // if (!raw_hid_receive_keychron(data, length))
-    //     return false;
+    if (via_command_user(data, length))
+        return true;
     switch (data[0]) {
         case kc_get_protocol_version:
             data[1] = PROTOCOL_VERSION;
@@ -203,7 +207,7 @@ bool via_command_kb(uint8_t *data, uint8_t length) {
 }
 
 #if !defined(VIA_ENABLE)
-void raw_hid_receive(uint8_t *data, uint8_t length) {
+void raw_hid_receive_keychron(uint8_t *data, uint8_t length) {
     switch (data[0]) {
         case RAW_HID_CMD:
             via_command_kb(data, length);

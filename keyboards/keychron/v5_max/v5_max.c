@@ -30,16 +30,16 @@
 #define POWER_ON_LED_DURATION 3000
 static uint32_t power_on_indicator_timer;
 
-#ifdef DIP_SWITCH_ENABLE
-bool dip_switch_update_kb(uint8_t index, bool active) {
-    if (index == 0) {
-        default_layer_set(1UL << (active ? 0 : 2));
-    }
-    dip_switch_update_user(index, active);
+// #ifdef DIP_SWITCH_ENABLE
+// bool dip_switch_update_kb(uint8_t index, bool active) {
+//     if (index == 0) {
+//         default_layer_set(1UL << (active ? 0 : 2));
+//     }
+//     dip_switch_update_user(index, active);
 
-    return true;
-}
-#endif
+//     return true;
+// }
+// #endif
 
 void keyboard_post_init_kb(void) {
 #ifdef LK_WIRELESS_ENABLE
